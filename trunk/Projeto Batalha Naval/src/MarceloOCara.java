@@ -16,7 +16,6 @@ public class MarceloOCara {
     /** Creates a new instance of MarceloOCara */
     public MarceloOCara() {
 
-alterado, alterado, alterado
     }
     
 }
