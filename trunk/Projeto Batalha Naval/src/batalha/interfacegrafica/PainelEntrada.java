@@ -66,7 +66,7 @@ public class PainelEntrada extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(338, 338, 338)
                 .addComponent(jBtIniciarJogo, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(69, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
@@ -92,7 +92,7 @@ public class PainelEntrada extends javax.swing.JPanel {
                                 .addComponent(jROpcaoCliente))
                             .addComponent(jCbIpsUtilizados, javax.swing.GroupLayout.Alignment.LEADING, 0, 185, Short.MAX_VALUE)
                             .addComponent(jCkAdicionarIp, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE))))
-                .addGap(162, 162, 162))
+                .addGap(164, 164, 164))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -120,6 +120,8 @@ public class PainelEntrada extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     
+            
+            
     
     // Declaração de variáveis - não modifique//GEN-BEGIN:variables
     private javax.swing.JButton jBtIniciarJogo;
@@ -134,4 +136,7 @@ public class PainelEntrada extends javax.swing.JPanel {
     private javax.swing.JTextField jTxNovoIp;
     // Fim da declaração de variáveis//GEN-END:variables
     
+    public static void main (){
+        PainelEntrada application = new PainelEntrada();
+    }
 }
