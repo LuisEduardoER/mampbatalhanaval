@@ -15,6 +15,7 @@ public class PainelEntrada extends javax.swing.JPanel {
     /** Creates new form PainelEntrada */
     public PainelEntrada() {
         initComponents();
+        adicionaListeners();
     }
     
     /** This method is called from within the constructor to
@@ -138,5 +139,9 @@ public class PainelEntrada extends javax.swing.JPanel {
     
     public static void main (){
         PainelEntrada application = new PainelEntrada();
+    }
+
+    private void adicionaListeners() {
+        
     }
 }
