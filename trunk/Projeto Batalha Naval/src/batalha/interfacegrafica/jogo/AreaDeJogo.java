@@ -7,13 +7,30 @@
 
 package batalha.interfacegrafica.jogo;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 /**
  *
  * @author Usuario
  */
-public class AreaDeJogo {
+public class AreaDeJogo extends JPanel{
     
-    public AreaDeJogo() {
+    private TabuleiroJogador  tabuleiroJogador = null;
+
+    
+    public AreaDeJogo(AreaDeConfiguracaoDeNavio area) {
+        
+        this.setLayout(new BorderLayout());
+        
+        tabuleiroJogador = new TabuleiroJogador(area);
+        
+        this.add(tabuleiroJogador);
+        
     }
     
+    protected void paintComponent(Graphics g){
+        
+        tabuleiroJogador.repaint();
+    }
 }
