@@ -38,6 +38,9 @@ public class TabuleiroJogador extends JPanel{
     private String nomeDoNavio = null;
     private int larguraNavio = -1;
     private int alturaNavio = -1;
+
+    private int contadorPosicionamentoOk = 0;
+
     /**
      * 
      * Construtor da classe TabuleiroJogador
@@ -52,14 +55,16 @@ public class TabuleiroJogador extends JPanel{
        
         this.setSize(251,251);
         this.areaDeConfiguracaoDeNavio = areaDeConfiguracaoDeNavio;
-        this.novoCursor = Toolkit.getDefaultToolkit()
+        /*this.novoCursor = Toolkit.getDefaultToolkit()
              .createCustomCursor( (new ImageIcon("cursor.gif")).getImage(),
-                new Point(12,12), null);
+                new Point(12,12), null);*/
         this.imagensDoTabuleiro = new ImagemDoTabuleiro[5];
         this.matrizLogicaDoTabuleiro = new String[10][10];
-        for(int i = 0; i < 100; i++)
-             this.matrizLogicaDoTabuleiro[i/10][i%10] = new String("agua");
-        
+        for(int i = 0; i < 10; i++){
+             for(int j = 0; j < 10; j++){
+                    matrizLogicaDoTabuleiro[i][j] = "agua";
+             }
+        }
         this.mouseHandler = new MouseHandler();
         addMouseListener(this.mouseHandler);
         
@@ -70,7 +75,8 @@ public class TabuleiroJogador extends JPanel{
      */
     public void setListenerOff(){
             
-        removeMouseListener(mouseHandler);
+        removeMouseListener(this.mouseHandler);
+        setEnabled(false);
     }
     
     
@@ -79,12 +85,14 @@ public class TabuleiroJogador extends JPanel{
      */
     protected void paintComponent(Graphics g){
         
+        super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         
         GradientPaint gp = new GradientPaint(0.0f, 0.0f, Color.CYAN,
 				   250.0f, 250.0f, Color.WHITE);
 	g2.setPaint(gp);
-	g2.fillRect(0, 0, 250, 250);
+	
+        g2.fillRect(0,0,250,250);
 
         g2.setColor(new Color(0,100,90));
         
@@ -94,12 +102,13 @@ public class TabuleiroJogador extends JPanel{
 	    g2.drawLine(0,i*25,250,i*25);
         }
 
+        
        
        for(int i = 0; i < imagensDoTabuleiro.length; i++){
             
            if(imagensDoTabuleiro[i] != null){
                
-              g.drawImage(imagensDoTabuleiro[i].imagem, imagensDoTabuleiro[i].pontoInicial.x,  imagensDoTabuleiro[i].pontoInicial.y,this);  
+              g2.drawImage(imagensDoTabuleiro[i].imagem, imagensDoTabuleiro[i].pontoInicial.x, imagensDoTabuleiro[i].pontoInicial.y,this);  
            }
        }
     }
@@ -121,9 +130,14 @@ public class TabuleiroJogador extends JPanel{
 
                  imagensDoTabuleiro[areaDeConfiguracaoDeNavio.posicaoUltimoNavio] = 
                             new ImagemDoTabuleiro(areaDeConfiguracaoDeNavio.imagemUltimoNavio, normalizaPonto(x,y));
-                 repaint();
+                 
                  areaDeConfiguracaoDeNavio.disableUltimoNavioSelecionado();
-                
+                 areaDeConfiguracaoDeNavio.nomeUltimoNavio = null;
+                 areaDeConfiguracaoDeNavio.larguraUltimoNavio = -1; 
+                 areaDeConfiguracaoDeNavio.posicaoUltimoNavio = -1;
+                 areaDeConfiguracaoDeNavio.imagemUltimoNavio = null;
+                 if(++contadorPosicionamentoOk == 5) setListenerOff();
+                 repaint();
         } else{
 
             JOptionPane.showMessageDialog(null,"SEU NAVIO NÃO PODE SER COLOCADO NESTA POSIÇÃO. TENTE NOVAMENTE",
@@ -137,7 +151,7 @@ public class TabuleiroJogador extends JPanel{
         int xNormalizado = (int)(x/25);
         int yNormalizado = (int)(y/25);
         
-        return new Point(x*25+1,y*25+1);
+        return new Point(xNormalizado*25+1,yNormalizado*25+1);
     }
     
     /**
@@ -153,38 +167,57 @@ public class TabuleiroJogador extends JPanel{
        
         boolean check = true;
         
+        imprimeTabuleiro();
+        
         if(areaDeConfiguracaoDeNavio.verticalShip){
-                
+            System.out.println("VERTICAL\n");    
             int xInicialMatriz = (int)(x/25); 
             int yInicialMatriz = (int)(y/25); 
-            int yFinalMatriz = (int)((y+alturaNavio)/25);
-             
-            for(int i = yInicialMatriz; i <= yFinalMatriz; i++){
-                    if(matrizLogicaDoTabuleiro[xInicialMatriz][i].equalsIgnoreCase("agua")) return false;
+            int yFinalMatriz = (int)((y-alturaNavio)/25);
+            
+            if(yInicialMatriz - (yInicialMatriz - yFinalMatriz) -1 < 0) return false;
+            
+            for(int i = yInicialMatriz; i < yFinalMatriz; i++){
+                    if(!matrizLogicaDoTabuleiro[xInicialMatriz][i].equalsIgnoreCase("agua")) return false;
             }
             
-            for(int i = yInicialMatriz; i <= yFinalMatriz; i++){
+            for(int i = yInicialMatriz; i < yFinalMatriz; i++){
                    matrizLogicaDoTabuleiro[xInicialMatriz][i] = nomeDoNavio; 
             }
             
+             imprimeTabuleiro();
             return true;
         }
         
+        System.out.println("HORIZONTAL\n");
         int xInicialMatriz = (int)(x/25);
         int yInicialMatriz = (int)(y/25);
         int xFinalMatriz = (int)((x+larguraNavio)/25);
+        System.out.println("X inicial: "+xInicialMatriz+", Y Inicial: "+yInicialMatriz+", X Final: "+xFinalMatriz);
         
-        for(int i = xInicialMatriz; i <= xFinalMatriz; i++){
-            if(matrizLogicaDoTabuleiro[xInicialMatriz][i].equalsIgnoreCase("agua")) return false;
+        if(xInicialMatriz + (xFinalMatriz - xInicialMatriz) -1 > 9) return false;
+        
+        for(int i = xInicialMatriz; i < xFinalMatriz; i++){
+            if(!matrizLogicaDoTabuleiro[i][yInicialMatriz].equalsIgnoreCase("agua")) return false;
         }
         
-        for(int i = xInicialMatriz; i <= xFinalMatriz; i++){
-            matrizLogicaDoTabuleiro[xInicialMatriz][i] = nomeDoNavio;
+        for(int i = xInicialMatriz; i < xFinalMatriz; i++){
+            matrizLogicaDoTabuleiro[i][yInicialMatriz] = nomeDoNavio;
         }
-        
+        System.out.println("\n\n");
+        imprimeTabuleiro();
         return true;
     }
 
+    private void imprimeTabuleiro(){
+        
+        for(int i = 0; i < 10; i++){
+           for(int j = 0; j < 10; j++){
+                System.out.println(i+","+j+"= "+matrizLogicaDoTabuleiro[i][j]);
+           }
+           System.out.println("");
+        }
+    }
    /**
     * MouseMotionHandler.java
     *
@@ -219,32 +252,44 @@ public class TabuleiroJogador extends JPanel{
     
     private class MouseHandler extends MouseAdapter{
         
-        public void mousePressed(MouseEvent me){
+        public void mouseClicked(MouseEvent me){
             
+           // if(eventsAreOff) return; //Solução gambiarra -.-
             //Posiciona uma imagem no tabuleiro
-            if(me.getModifiers() == me.BUTTON1){
+            if(me.getButton() == me.BUTTON1){
+                
+                if(areaDeConfiguracaoDeNavio.nomeUltimoNavio == null && areaDeConfiguracaoDeNavio.posicaoUltimoNavio == -1){
+                    JOptionPane.showMessageDialog(null,"SELECIONE UM NAVIO PARA POSICIONAR NO TABULEIRO.",
+                    "SELECIONE UM NAVIO", JOptionPane.INFORMATION_MESSAGE /*Icone vem aqui.*/);
+                    return;
+                }
                 
                 if(areaDeConfiguracaoDeNavio != null){
                     
                     if(areaDeConfiguracaoDeNavio.verticalShip){
                         
                         nomeDoNavio = areaDeConfiguracaoDeNavio.nomeUltimoNavio+"v";
+                        System.out.println("Nome do navio, dentro do tabuleiro: "+nomeDoNavio);
                         larguraNavio = 25;
                         alturaNavio = areaDeConfiguracaoDeNavio.larguraUltimoNavio;
-                        
+                        System.out.println("Altura do navio, dentro do tabuleiro: "+alturaNavio);
                     }else{
                         
                         nomeDoNavio = areaDeConfiguracaoDeNavio.nomeUltimoNavio;
                         alturaNavio = 25;
+                        System.out.println("Nome do navio, dentro do tabuleiro,sem ser vertical: "+nomeDoNavio);
                         larguraNavio = areaDeConfiguracaoDeNavio.larguraUltimoNavio;
-                    }
+                    }   System.out.println("Largura do navio, dentro do tabuleiro,sem ser vertical: "+larguraNavio);
+                    
+                    System.out.println("Ponto x: "+me.getX()+", ponto y: "+me.getY());
                     configuraImagem(me.getX(),me.getY());
+                     areaDeConfiguracaoDeNavio.verticalShip = false;
                 }
                 return;
             }
             
             //Altera o modo em que a imagem será colocada
-            if(me.getModifiers() == me.BUTTON3){
+            if(me.getButton() == me.BUTTON3){
                 
                 areaDeConfiguracaoDeNavio.verticalShip = !areaDeConfiguracaoDeNavio.verticalShip;
                 
