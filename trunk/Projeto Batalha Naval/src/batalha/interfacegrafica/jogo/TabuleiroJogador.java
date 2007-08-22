@@ -22,7 +22,14 @@ import java.awt.event.*;
  * 
  * @date 12/08/2007
  * @version 0.1
+ *
+ * @date 21/08/2007
+ * @version 0.1
+ *
+ * @date 22/08/2007
+ * @version 0.2
  */
+
 public class TabuleiroJogador extends JPanel{
     
     //Novo cursor para usar sobre o tabuleiro inimigo
@@ -31,16 +38,25 @@ public class TabuleiroJogador extends JPanel{
     private AreaDeConfiguracaoDeNavio areaDeConfiguracaoDeNavio = null;
     //Instância de um objeto manipulador de eventos do mouse
     private MouseHandler mouseHandler = null;
+    //Manipulador de eventos de movimento do mouse
+    private MouseMotionHandler mouseMotionHandler = null;
     //Armazena as imagens do tabuleiro
     private ImagemDoTabuleiro[] imagensDoTabuleiro = null;
     //Matriz lógica do tabuleiro, que armazena a posição e tipo do navio
     private String[][] matrizLogicaDoTabuleiro = null;
+    //Variável auxiliar que armazena o nome do último navio, necessária para o caso do navio se encontrar na vertical, onde deve-se
+    //concatenar ao nome do navio a extensão "v". Veja o nome das imagens.
     private String nomeDoNavio = null;
+    //Variável auxiliar que armazena a largura do navio, necessária para o caso do navio se encontrar na vertical, onde deve-se
+    //reconfigurar a largura do navio para 25. Veja o tamanho das imagens.
     private int larguraNavio = -1;
+    //Variável auxiliar que armazena a largura do navio, necessária para o caso do navio se encontrar na vertical, onde deve-se
+    //reconfigurar a altura do navio. Veja o tamanho das imagens.    
     private int alturaNavio = -1;
-
+    //Contador que verifica se todos os navios já foram posicionados. Esta variável ativa a política de desativar o
+    //painel de configuração
     private int contadorPosicionamentoOk = 0;
-
+    private Point posicaoCursor = null;
     /**
      * 
      * Construtor da classe TabuleiroJogador
@@ -52,22 +68,24 @@ public class TabuleiroJogador extends JPanel{
      * @param areaDeConfiguracaoDeNavio referência ao objeto da classe AreaDeConfiguracaoDeNavio
      */ 
     public TabuleiroJogador(AreaDeConfiguracaoDeNavio areaDeConfiguracaoDeNavio){
-       
-        this.setSize(251,251);
+        
         this.areaDeConfiguracaoDeNavio = areaDeConfiguracaoDeNavio;
-        /*this.novoCursor = Toolkit.getDefaultToolkit()
-             .createCustomCursor( (new ImageIcon("cursor.gif")).getImage(),
-                new Point(12,12), null);*/
+        
+        this.setBorder( BorderFactory.createLineBorder( new Color(0,100,90) ) );
         this.imagensDoTabuleiro = new ImagemDoTabuleiro[5];
+        
         this.matrizLogicaDoTabuleiro = new String[10][10];
         for(int i = 0; i < 10; i++){
              for(int j = 0; j < 10; j++){
                     matrizLogicaDoTabuleiro[i][j] = "agua";
              }
         }
-        this.mouseHandler = new MouseHandler();
-        addMouseListener(this.mouseHandler);
         
+        this.mouseHandler = new MouseHandler();
+        this.mouseMotionHandler = new MouseMotionHandler();
+        addMouseListener(this.mouseHandler);
+        addMouseMotionListener(this.mouseMotionHandler);
+        this.posicaoCursor = new Point();
     }
 
     /**
@@ -76,9 +94,9 @@ public class TabuleiroJogador extends JPanel{
     public void setListenerOff(){
             
         removeMouseListener(this.mouseHandler);
+        removeMouseMotionListener(this.mouseMotionHandler);
         setEnabled(false);
     }
-    
     
     /**
      * Método que desenha o tabuleiro
@@ -92,18 +110,19 @@ public class TabuleiroJogador extends JPanel{
 				   250.0f, 250.0f, Color.WHITE);
 	g2.setPaint(gp);
 	
+        //Desenha o tabuleiro, de acordo com o gradiente
         g2.fillRect(0,0,250,250);
 
         g2.setColor(new Color(0,100,90));
         
+        //Desenha as linhas do tabuleiro
         for (int i=1; i<10; i++)
         {
             g2.drawLine(i*25,0,i*25,250);
 	    g2.drawLine(0,i*25,250,i*25);
         }
-
-        
        
+        //Desenha as imagens
        for(int i = 0; i < imagensDoTabuleiro.length; i++){
             
            if(imagensDoTabuleiro[i] != null){
@@ -111,6 +130,15 @@ public class TabuleiroJogador extends JPanel{
               g2.drawImage(imagensDoTabuleiro[i].imagem, imagensDoTabuleiro[i].pontoInicial.x, imagensDoTabuleiro[i].pontoInicial.y,this);  
            }
        }
+       
+       if(areaDeConfiguracaoDeNavio.imagemUltimoNavio == null ) return; 
+       Point p = normalizaPonto(posicaoCursor.x, posicaoCursor.y);
+       //System.out.println("Ponto p: "+p.getX()+","+p.getY());
+       //System.out.println("Ponto p: "+p.x+","+p.y);
+       if (areaDeConfiguracaoDeNavio.verticalShip) g2.fill3DRect(p.x,
+                 p.y, 25, areaDeConfiguracaoDeNavio.larguraUltimoNavio, false);
+       else g2.fill3DRect(p.x,
+                 p.y, areaDeConfiguracaoDeNavio.larguraUltimoNavio, 25, false);
     }
     
     /**
@@ -127,31 +155,40 @@ public class TabuleiroJogador extends JPanel{
                                alturaNavio, x, y);
 
         if(checkPosicao){
-
-                 imagensDoTabuleiro[areaDeConfiguracaoDeNavio.posicaoUltimoNavio] = 
+                 
+                 //Atualiza o nome da imagem para "X.v", onde X é o nome do navio solicitado.
+                 if(areaDeConfiguracaoDeNavio.verticalShip)
+                        imagensDoTabuleiro[areaDeConfiguracaoDeNavio.posicaoUltimoNavio] = 
+                            new ImagemDoTabuleiro((new ImageIcon(nomeDoNavio+".jpg").getImage()), normalizaPonto(x,y));
+                 else imagensDoTabuleiro[areaDeConfiguracaoDeNavio.posicaoUltimoNavio] = 
                             new ImagemDoTabuleiro(areaDeConfiguracaoDeNavio.imagemUltimoNavio, normalizaPonto(x,y));
                  
+                 //Reconfigura a área de navio
                  areaDeConfiguracaoDeNavio.disableUltimoNavioSelecionado();
                  areaDeConfiguracaoDeNavio.nomeUltimoNavio = null;
                  areaDeConfiguracaoDeNavio.larguraUltimoNavio = -1; 
                  areaDeConfiguracaoDeNavio.posicaoUltimoNavio = -1;
                  areaDeConfiguracaoDeNavio.imagemUltimoNavio = null;
+                 
+                 //Se todos os navios estão configurados, retira-se o listener de evento do tabuleiro.
                  if(++contadorPosicionamentoOk == 5) setListenerOff();
                  repaint();
-        } else{
-
+        } 
+        else{
             JOptionPane.showMessageDialog(null,"SEU NAVIO NÃO PODE SER COLOCADO NESTA POSIÇÃO. TENTE NOVAMENTE",
                     "ERRO DE POSICIONAMENTO DO NAVIO", JOptionPane.WARNING_MESSAGE /*Icone vem aqui.*/);
-
         }
     }
 
+   /**
+    * Retorna um ponto normalizado onde deve-se desenhar cada navio
+    */ 
     private Point normalizaPonto(int x, int y){
         
         int xNormalizado = (int)(x/25);
         int yNormalizado = (int)(y/25);
         
-        return new Point(xNormalizado*25+1,yNormalizado*25+1);
+        return new Point(xNormalizado*25,yNormalizado*25);
     }
     
     /**
@@ -167,15 +204,17 @@ public class TabuleiroJogador extends JPanel{
        
         boolean check = true;
         
-        imprimeTabuleiro();
+       // imprimeTabuleiro();
         
         if(areaDeConfiguracaoDeNavio.verticalShip){
-            System.out.println("VERTICAL\n");    
+          //  System.out.println("VERTICAL\n");    
             int xInicialMatriz = (int)(x/25); 
             int yInicialMatriz = (int)(y/25); 
-            int yFinalMatriz = (int)((y-alturaNavio)/25);
+            int yFinalMatriz = (int)((y+alturaNavio)/25);
             
-            if(yInicialMatriz - (yInicialMatriz - yFinalMatriz) -1 < 0) return false;
+           // System.out.println("X inicial: "+xInicialMatriz+", Y Inicial: "+yInicialMatriz+", Y Final: "+yFinalMatriz);
+            
+            if(yInicialMatriz + (yFinalMatriz - yInicialMatriz) -1 > 9) return false;
             
             for(int i = yInicialMatriz; i < yFinalMatriz; i++){
                     if(!matrizLogicaDoTabuleiro[xInicialMatriz][i].equalsIgnoreCase("agua")) return false;
@@ -189,11 +228,11 @@ public class TabuleiroJogador extends JPanel{
             return true;
         }
         
-        System.out.println("HORIZONTAL\n");
+       // System.out.println("HORIZONTAL\n");
         int xInicialMatriz = (int)(x/25);
         int yInicialMatriz = (int)(y/25);
         int xFinalMatriz = (int)((x+larguraNavio)/25);
-        System.out.println("X inicial: "+xInicialMatriz+", Y Inicial: "+yInicialMatriz+", X Final: "+xFinalMatriz);
+        //System.out.println("X inicial: "+xInicialMatriz+", Y Inicial: "+yInicialMatriz+", X Final: "+xFinalMatriz);
         
         if(xInicialMatriz + (xFinalMatriz - xInicialMatriz) -1 > 9) return false;
         
@@ -204,7 +243,7 @@ public class TabuleiroJogador extends JPanel{
         for(int i = xInicialMatriz; i < xFinalMatriz; i++){
             matrizLogicaDoTabuleiro[i][yInicialMatriz] = nomeDoNavio;
         }
-        System.out.println("\n\n");
+       // System.out.println("\n\n");
         imprimeTabuleiro();
         return true;
     }
@@ -213,13 +252,17 @@ public class TabuleiroJogador extends JPanel{
         
         for(int i = 0; i < 10; i++){
            for(int j = 0; j < 10; j++){
-                System.out.println(i+","+j+"= "+matrizLogicaDoTabuleiro[i][j]);
+                System.out.print(i+","+j+"= "+matrizLogicaDoTabuleiro[i][j]);
+                System.out.print("\t");
            }
            System.out.println("");
         }
+        
+        System.out.println("\n\n");
     }
+    
    /**
-    * MouseMotionHandler.java
+    * ImagemDoTabuleiro.java
     *
     * Criado em 12 de Agosto de 2007, 22:18
     * 
@@ -241,13 +284,12 @@ public class TabuleiroJogador extends JPanel{
     }
     
     /**
-     * MouseMotionHandler.java
+     * MouseHandler.java
      *
      * Criado em 12 de Agosto de 2007, 22:08
      *
-     * O propósito desta classe é lidar com eventos de mouse sobre o tabuleiro, de forma a:
-     * - ajustar o ponto atual do cursor
-     * - saber em qual posição será inserida a imagem
+     * O propósito desta classe é lidar com eventos de mouse sobre o tabuleiro, de forma a saber em qual posição 
+     * será inserida a imagem
      */
     
     private class MouseHandler extends MouseAdapter{
@@ -269,21 +311,21 @@ public class TabuleiroJogador extends JPanel{
                     if(areaDeConfiguracaoDeNavio.verticalShip){
                         
                         nomeDoNavio = areaDeConfiguracaoDeNavio.nomeUltimoNavio+"v";
-                        System.out.println("Nome do navio, dentro do tabuleiro: "+nomeDoNavio);
+                        //System.out.println("Nome do navio, dentro do tabuleiro: "+nomeDoNavio);
                         larguraNavio = 25;
                         alturaNavio = areaDeConfiguracaoDeNavio.larguraUltimoNavio;
-                        System.out.println("Altura do navio, dentro do tabuleiro: "+alturaNavio);
+                        //System.out.println("Altura do navio, dentro do tabuleiro: "+alturaNavio);
                     }else{
                         
                         nomeDoNavio = areaDeConfiguracaoDeNavio.nomeUltimoNavio;
                         alturaNavio = 25;
-                        System.out.println("Nome do navio, dentro do tabuleiro,sem ser vertical: "+nomeDoNavio);
+                        //System.out.println("Nome do navio, dentro do tabuleiro,sem ser vertical: "+nomeDoNavio);
                         larguraNavio = areaDeConfiguracaoDeNavio.larguraUltimoNavio;
-                    }   System.out.println("Largura do navio, dentro do tabuleiro,sem ser vertical: "+larguraNavio);
+                    }   //System.out.println("Largura do navio, dentro do tabuleiro,sem ser vertical: "+larguraNavio);
                     
-                    System.out.println("Ponto x: "+me.getX()+", ponto y: "+me.getY());
+                    //System.out.println("Ponto x: "+me.getX()+", ponto y: "+me.getY());
                     configuraImagem(me.getX(),me.getY());
-                     areaDeConfiguracaoDeNavio.verticalShip = false;
+                    areaDeConfiguracaoDeNavio.verticalShip = false;
                 }
                 return;
             }
@@ -292,19 +334,27 @@ public class TabuleiroJogador extends JPanel{
             if(me.getButton() == me.BUTTON3){
                 
                 areaDeConfiguracaoDeNavio.verticalShip = !areaDeConfiguracaoDeNavio.verticalShip;
-                
+                repaint();
             }
-        }
-        
-        public void mouseEntered(MouseEvent me){
-        
-            if(getCursor() != novoCursor) setCursor(novoCursor);
-        }
-        
-        public void mouseExited(MouseEvent me){
             
-            setCursor(Cursor.getDefaultCursor());
         }
    }
+    
+    /**
+     * MouseMotionHandler.java
+     *
+     * Criado em 12 de Agosto de 2007, 22:08
+     *
+     * O propósito desta classe é lidar com eventos de mouse sobre o tabuleiro, de forma a ajustar o ponto atual do cursor
+     * e orientar o usuário a saber se o navio está na vertical ou horizontal.
+     */
+    private class MouseMotionHandler extends MouseMotionAdapter{
+
+        public void mouseMoved(MouseEvent me) {
+
+            posicaoCursor.setLocation(me.getPoint());
+            repaint();
+        }
+    }
     
 }//fim da classe TabuleiroJogador
