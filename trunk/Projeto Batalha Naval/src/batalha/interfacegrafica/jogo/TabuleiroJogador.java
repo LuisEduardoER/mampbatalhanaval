@@ -11,7 +11,7 @@
 
 package batalha.interfacegrafica.jogo;
 
-
+import batalha.interfacegrafica.PainelDoJogo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,8 +32,6 @@ import java.awt.event.*;
 
 public class TabuleiroJogador extends JPanel{
     
-    //Novo cursor para usar sobre o tabuleiro inimigo
-    private Cursor novoCursor = null;
     //Referência à àrea de configuração dos navios
     private AreaDeConfiguracaoDeNavio areaDeConfiguracaoDeNavio = null;
     //Instância de um objeto manipulador de eventos do mouse
@@ -57,6 +55,8 @@ public class TabuleiroJogador extends JPanel{
     //painel de configuração
     private int contadorPosicionamentoOk = 0;
     private Point posicaoCursor = null;
+    private PainelDoJogo painelDoJogo = null;
+    
     /**
      * 
      * Construtor da classe TabuleiroJogador
@@ -67,9 +67,10 @@ public class TabuleiroJogador extends JPanel{
      * 
      * @param areaDeConfiguracaoDeNavio referência ao objeto da classe AreaDeConfiguracaoDeNavio
      */ 
-    public TabuleiroJogador(AreaDeConfiguracaoDeNavio areaDeConfiguracaoDeNavio){
+    public TabuleiroJogador(AreaDeConfiguracaoDeNavio areaDeConfiguracaoDeNavio,PainelDoJogo painelDoJogo){
         
         this.areaDeConfiguracaoDeNavio = areaDeConfiguracaoDeNavio;
+        this.painelDoJogo = painelDoJogo;
         
         this.setBorder( BorderFactory.createLineBorder( new Color(0,100,90) ) );
         this.imagensDoTabuleiro = new ImagemDoTabuleiro[5];
@@ -127,7 +128,7 @@ public class TabuleiroJogador extends JPanel{
             
            if(imagensDoTabuleiro[i] != null){
                
-              g2.drawImage(imagensDoTabuleiro[i].imagem, imagensDoTabuleiro[i].pontoInicial.x, imagensDoTabuleiro[i].pontoInicial.y,this);  
+              g2.drawImage(imagensDoTabuleiro[i].getImagem(), imagensDoTabuleiro[i].getPontoInicial().x, imagensDoTabuleiro[i].getPontoInicial().y,this);  
            }
        }
        
@@ -171,7 +172,11 @@ public class TabuleiroJogador extends JPanel{
                  areaDeConfiguracaoDeNavio.imagemUltimoNavio = null;
                  
                  //Se todos os navios estão configurados, retira-se o listener de evento do tabuleiro.
-                 if(++contadorPosicionamentoOk == 5) setListenerOff();
+                 if(++contadorPosicionamentoOk == 5){
+                     
+                     setListenerOff();
+                     painelDoJogo.trocarPaineis();
+                 }
                  repaint();
         } 
         else{
@@ -221,7 +226,7 @@ public class TabuleiroJogador extends JPanel{
             }
             
             for(int i = yInicialMatriz; i < yFinalMatriz; i++){
-                   matrizLogicaDoTabuleiro[xInicialMatriz][i] = nomeDoNavio; 
+                   matrizLogicaDoTabuleiro[xInicialMatriz][i] = nomeDoNavio+" "+i; 
             }
             
              imprimeTabuleiro();
@@ -241,7 +246,7 @@ public class TabuleiroJogador extends JPanel{
         }
         
         for(int i = xInicialMatriz; i < xFinalMatriz; i++){
-            matrizLogicaDoTabuleiro[i][yInicialMatriz] = nomeDoNavio;
+            matrizLogicaDoTabuleiro[i][yInicialMatriz] = nomeDoNavio+" "+i;
         }
        // System.out.println("\n\n");
         imprimeTabuleiro();
@@ -268,20 +273,6 @@ public class TabuleiroJogador extends JPanel{
     * 
     * O propósito desta classe é armazenar cada imagem que representa um navio e sua posição no tabuleiro
     */
-    private class ImagemDoTabuleiro{
-        
-        private Image imagem = null;
-        private Point pontoInicial = null;
-        
-        
-        public ImagemDoTabuleiro(Image imagem, Point pontoInicial){
-            
-            this.imagem = imagem; 
-            this.pontoInicial = pontoInicial; 
-
-        }
-        
-    }
     
     /**
      * MouseHandler.java
