@@ -7,6 +7,7 @@
 package batalha.interfacegrafica;
 
 import batalha.interfacegrafica.jogo.*;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -27,7 +28,7 @@ public class PainelDoJogo extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc=" Código Gerado ">                          
     private void initComponents() {
         
-        tabuleiroOponente = new javax.swing.JPanel();
+        tabuleiroOponente = new TabuleiroInimigo();
         jScrollPane1 = new javax.swing.JScrollPane();
         chat = new javax.swing.JTextArea();
         painelCentral = new javax.swing.JPanel();
@@ -35,8 +36,9 @@ public class PainelDoJogo extends javax.swing.JPanel {
         painelLabelJogo = new javax.swing.JPanel();
         btEnviarMensagem = new javax.swing.JButton();
         areaDeConfiguracaoDeNavio = new AreaDeConfiguracaoDeNavio();
-        meuTabuleiro = new /*javax.swing.JPanel*/TabuleiroJogador(areaDeConfiguracaoDeNavio);
-
+        meuTabuleiro = new TabuleiroJogador(areaDeConfiguracaoDeNavio,this);
+        dadosRede = new DadosRede();
+        
         meuTabuleiro.setBackground(new java.awt.Color(255, 0, 0));
         meuTabuleiro.setMaximumSize(new java.awt.Dimension(250, 250));
         meuTabuleiro.setMinimumSize(new java.awt.Dimension(250, 250));
@@ -163,6 +165,25 @@ public class PainelDoJogo extends javax.swing.JPanel {
         );
     }// </editor-fold>                        
     
+    public void trocarPaineis(){
+        
+        remove(areaDeConfiguracaoDeNavio);
+        
+        javax.swing.GroupLayout dadosRedeLayout = new javax.swing.GroupLayout(dadosRede);
+        dadosRede.setLayout(dadosRedeLayout);
+        dadosRedeLayout.setHorizontalGroup(
+                dadosRedeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 619, Short.MAX_VALUE)
+                );
+        dadosRedeLayout.setVerticalGroup(
+                dadosRedeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 100, Short.MAX_VALUE)
+                );
+        //validate();
+       this.add(dadosRede);
+
+         this.update(this.getGraphics());
+    }
     
     // Declaração de variáveis - não modifique                     
     private AreaDeConfiguracaoDeNavio areaDeConfiguracaoDeNavio;
@@ -173,7 +194,8 @@ public class PainelDoJogo extends javax.swing.JPanel {
     private TabuleiroJogador meuTabuleiro;
     private javax.swing.JPanel painelCentral;
     private javax.swing.JPanel painelLabelJogo;
-    private javax.swing.JPanel tabuleiroOponente;
+    private TabuleiroInimigo tabuleiroOponente;
+    private DadosRede dadosRede;
     // Fim da declaração de variáveis                   
     
 }

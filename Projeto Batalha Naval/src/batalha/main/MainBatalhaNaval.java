@@ -27,6 +27,10 @@ public class MainBatalhaNaval {
         teste.setVisible(true);
         PainelDoJogo painelDoJogo = new PainelDoJogo();
         teste.getContentPane().add(painelDoJogo);
+        //MedidorRede medidor = new MedidorRede();
+        //teste.getContentPane().add(medidor);
+        //teste.pack();
+        //medidor.run();
         teste.setSize(685,580);
         //teste.setResizable(false);
         teste.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
