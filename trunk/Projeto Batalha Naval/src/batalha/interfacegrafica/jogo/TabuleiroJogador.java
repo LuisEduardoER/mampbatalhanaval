@@ -33,7 +33,7 @@ import java.awt.event.*;
 public class TabuleiroJogador extends JPanel{
     
     //Referência à àrea de configuração dos navios
-    private AreaDeConfiguracaoDeNavio areaDeConfiguracaoDeNavio = null;
+    private AreaCentral areaDeConfiguracaoDeNavio = null;
     //Instância de um objeto manipulador de eventos do mouse
     private MouseHandler mouseHandler = null;
     //Manipulador de eventos de movimento do mouse
@@ -55,7 +55,7 @@ public class TabuleiroJogador extends JPanel{
     //painel de configuração
     private int contadorPosicionamentoOk = 0;
     private Point posicaoCursor = null;
-    private PainelDoJogo painelDoJogo = null;
+
     
     /**
      * 
@@ -65,12 +65,12 @@ public class TabuleiroJogador extends JPanel{
      * pode ser configurado o seu tabuleiro, não o do oponente)
      * 
      * 
-     * @param areaDeConfiguracaoDeNavio referência ao objeto da classe AreaDeConfiguracaoDeNavio
+     * 
+     * @param areaDeConfiguracaoDeNavio referência ao objeto da classe AreaCentral
      */ 
-    public TabuleiroJogador(AreaDeConfiguracaoDeNavio areaDeConfiguracaoDeNavio,PainelDoJogo painelDoJogo){
+    public TabuleiroJogador(AreaCentral areaDeConfiguracaoDeNavio){
         
         this.areaDeConfiguracaoDeNavio = areaDeConfiguracaoDeNavio;
-        this.painelDoJogo = painelDoJogo;
         
         this.setBorder( BorderFactory.createLineBorder( new Color(0,100,90) ) );
         this.imagensDoTabuleiro = new ImagemDoTabuleiro[5];
@@ -175,7 +175,8 @@ public class TabuleiroJogador extends JPanel{
                  if(++contadorPosicionamentoOk == 5){
                      
                      setListenerOff();
-                     painelDoJogo.trocarPaineis();
+                     //painelDoJogo.trocarPaineis();
+                     areaDeConfiguracaoDeNavio.habilitaBotaoOk();
                  }
                  repaint();
         } 
@@ -226,10 +227,10 @@ public class TabuleiroJogador extends JPanel{
             }
             
             for(int i = yInicialMatriz; i < yFinalMatriz; i++){
-                   matrizLogicaDoTabuleiro[xInicialMatriz][i] = nomeDoNavio+" "+i; 
+                   matrizLogicaDoTabuleiro[xInicialMatriz][i] = nomeDoNavio; 
             }
             
-             imprimeTabuleiro();
+            imprimeTabuleiro();
             return true;
         }
         
@@ -246,7 +247,7 @@ public class TabuleiroJogador extends JPanel{
         }
         
         for(int i = xInicialMatriz; i < xFinalMatriz; i++){
-            matrizLogicaDoTabuleiro[i][yInicialMatriz] = nomeDoNavio+" "+i;
+            matrizLogicaDoTabuleiro[i][yInicialMatriz] = nomeDoNavio;
         }
        // System.out.println("\n\n");
         imprimeTabuleiro();
@@ -285,7 +286,7 @@ public class TabuleiroJogador extends JPanel{
     
     private class MouseHandler extends MouseAdapter{
         
-        public void mouseClicked(MouseEvent me){
+        public void mousePressed(MouseEvent me){
             
            // if(eventsAreOff) return; //Solução gambiarra -.-
             //Posiciona uma imagem no tabuleiro

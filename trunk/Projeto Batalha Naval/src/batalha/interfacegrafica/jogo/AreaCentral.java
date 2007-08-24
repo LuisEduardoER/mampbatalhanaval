@@ -1,5 +1,5 @@
 /*
- * AreaDeConfiguracaoDeNavio.java
+ * AreaCentral.java
  *
  * Criado em 12 de Agosto de 2007, 22:42
  *
@@ -8,6 +8,7 @@
 
 package batalha.interfacegrafica.jogo;
 
+import batalha.interfacegrafica.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -22,21 +23,23 @@ import java.awt.event.*;
  * @date 22/08/2007
  * @version 0.2
  */
-public class AreaDeConfiguracaoDeNavio extends JPanel{
+public class AreaCentral extends JPanel{
     
     /**
      * Segue uma explicação do uso desta classe:
      * 
-     * A classe AreaDeConfiguracaoDeNavio compartilha certos campos com a classe TabuleiroJogador (@see TabuleiroJogador), de forma
+     * A classe AreaCentral compartilha certos campos com a classe TabuleiroJogador (@see TabuleiroJogador), de forma
      * que estes campos representam informações sobre o último navio selecionado (i.e, qual foi o último botão clicado pelo usuário,
      * que por sua vez indica o navio selecionado). Para que este compartilhamento seja possível, deve-se utilizar o modificador
      * "protected", de forma que apenas classes dentro do mesmo pacote tenham visibilidade sobre estes campos.
+     * 
      * 
      * @author: Renato
      */
     
     //Botões que o usuário deve escolher para escolher seu navio
     private JButton[] containerDosNavios = null;
+    private JButton botaoValidaPosicao = null;
     //Array com as imagens de cada navio (são ícones para os botões)
     private ImageIcon[] imagens = null;
     //Array que armazena o nome dos navios
@@ -53,6 +56,8 @@ public class AreaDeConfiguracaoDeNavio extends JPanel{
     //Armazena a largura do último navio, e sua posição dentro do array de botões
     protected int larguraUltimoNavio = 0, 
                 posicaoUltimoNavio = -1;
+    
+    private DadosRede dadosRede = null;
     /**
      * Indica se o navio está configurado na vertical ou horizontal. Uma forma mais intuitiva, para o usuário, é adicionar um cursor que
      * possa indicar se o navio está na horizontal ou vertical. Este desenvolvimento está sendo feito por mim.
@@ -62,17 +67,19 @@ public class AreaDeConfiguracaoDeNavio extends JPanel{
     protected boolean verticalShip = false;
     //Handler para os botões, configurando os campos compartilhados
     private ActionHandler actionHandler = null;
-    
+    //private PainelDoJogo painelDoJogo = null;
+    private TabuleiroInimigo tabuleiroInimigo = null;
     /**
-     * Construtor da classe AreaDeConfiguracaoDeNavio
+     * Construtor da classe AreaCentral
      */
-    public AreaDeConfiguracaoDeNavio() {
+    public AreaCentral(TabuleiroInimigo tabuleiroInimigo) {
         
         containerDosNavios = new JButton[5];
         imagens = new ImageIcon[5];
         nomeDosNavios = new String[5];
         actionHandler = new ActionHandler();
-        
+        botaoValidaPosicao = new JButton();
+        this.tabuleiroInimigo = tabuleiroInimigo;
         //Cria uma borda com título sobre o painel
         this.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.BLACK),
@@ -101,6 +108,8 @@ public class AreaDeConfiguracaoDeNavio extends JPanel{
             this.add(containerDosNavios[i]);
         }
         
+        this.add(botaoValidaPosicao);
+        
         containerDosNavios[0].setText("Patrulha");
         containerDosNavios[0].setBounds(30,30,160,40);
         containerDosNavios[1].setText("Submarino");
@@ -108,10 +117,12 @@ public class AreaDeConfiguracaoDeNavio extends JPanel{
         containerDosNavios[2].setText("Encouraçado");
         containerDosNavios[2].setBounds(395,30,225,40);
         containerDosNavios[3].setText("Seawolf");
-        containerDosNavios[3].setBounds(90,80,210,40);
+        containerDosNavios[3].setBounds(30,80,210,40);
         containerDosNavios[4].setText("Porta aviões");
-        containerDosNavios[4].setBounds(310,80,250,40);
-        
+        containerDosNavios[4].setBounds(250,80,250,40);
+        botaoValidaPosicao.setText("Ok!");
+        botaoValidaPosicao.setBounds(510,80,80,40);
+        botaoValidaPosicao.setEnabled(false);
     }
    
     /**
@@ -124,6 +135,34 @@ public class AreaDeConfiguracaoDeNavio extends JPanel{
         repaint();
         
     }
+    
+    protected void habilitaBotaoOk(){
+        
+        botaoValidaPosicao.setEnabled(true);
+        botaoValidaPosicao.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        
+                       // painelDoJogo.trocarPaineis();
+                       for(int i = 0; i < containerDosNavios.length; i++)
+                           remove(containerDosNavios[i]);
+                       remove(botaoValidaPosicao);
+                       dadosRede = new DadosRede();
+                       AreaCentral.this.add(dadosRede);
+                       AreaCentral.this.validate();
+                       AreaCentral.this.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.BLACK),
+                "Dados da Rede"));
+                       
+                       SwingUtilities.updateComponentTreeUI(AreaCentral.this);
+                       tabuleiroInimigo.ligar();
+                    }
+                }
+        );
+
+        repaint();
+    }
+    
     
     /**
      * Handler de evento de clique sobre um botão.
