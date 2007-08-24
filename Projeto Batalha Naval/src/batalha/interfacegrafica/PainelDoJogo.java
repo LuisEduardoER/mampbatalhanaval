@@ -7,6 +7,8 @@
 package batalha.interfacegrafica;
 
 import batalha.interfacegrafica.jogo.*;
+import java.awt.LayoutManager;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 /**
@@ -32,13 +34,15 @@ public class PainelDoJogo extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         chat = new javax.swing.JTextArea();
         painelCentral = new javax.swing.JPanel();
+        painelControle = new javax.swing.JPanel();
         btPoderEspecial = new javax.swing.JButton();
         painelLabelJogo = new javax.swing.JPanel();
         btEnviarMensagem = new javax.swing.JButton();
-        areaDeConfiguracaoDeNavio = new AreaDeConfiguracaoDeNavio();
-        meuTabuleiro = new TabuleiroJogador(areaDeConfiguracaoDeNavio,this);
+        areaDeConfiguracaoDeNavio = new AreaCentral(tabuleiroOponente);
+        meuTabuleiro = new TabuleiroJogador(areaDeConfiguracaoDeNavio);
         dadosRede = new DadosRede();
-        
+        txfMensagem = new JTextField(110);
+                
         meuTabuleiro.setBackground(new java.awt.Color(255, 0, 0));
         meuTabuleiro.setMaximumSize(new java.awt.Dimension(250, 250));
         meuTabuleiro.setMinimumSize(new java.awt.Dimension(250, 250));
@@ -120,7 +124,20 @@ public class PainelDoJogo extends javax.swing.JPanel {
             areaDeConfiguracaoDeNavioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 100, Short.MAX_VALUE)
         );
-
+       /* painelControle.setBackground(java.awt.Color.BLACK);
+        javax.swing.GroupLayout painelControleLayout = new javax.swing.GroupLayout(painelControle);
+        painelControle.setLayout(painelControleLayout);
+        painelControleLayout.setHorizontalGroup(
+            painelControleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 619, Short.MAX_VALUE)
+        );
+        painelControleLayout.setVerticalGroup(
+            painelControleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );*/
+        
+        //painelControle.add(areaDeConfiguracaoDeNavio);
+        
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -163,12 +180,14 @@ public class PainelDoJogo extends javax.swing.JPanel {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
         );
+        txfMensagem.setBounds(45,670,200,40);
+        add(txfMensagem);
     }// </editor-fold>                        
     
-    public void trocarPaineis(){
+    /*public void trocarPaineis(){
         
         remove(areaDeConfiguracaoDeNavio);
-        
+        //LayoutManager lm = areaDeConfiguracaoDeNavio.getLayout();
         javax.swing.GroupLayout dadosRedeLayout = new javax.swing.GroupLayout(dadosRede);
         dadosRede.setLayout(dadosRedeLayout);
         dadosRedeLayout.setHorizontalGroup(
@@ -179,14 +198,33 @@ public class PainelDoJogo extends javax.swing.JPanel {
                 dadosRedeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGap(0, 100, Short.MAX_VALUE)
                 );
+        //areaDeConfiguracaoDeNavio = null;
+        //dadosRede.setLayout(lm);
         //validate();
-       this.add(dadosRede);
-
-         this.update(this.getGraphics());
-    }
+        javax.swing.JPanel p = new javax.swing.JPanel();
+        p.setBackground(java.awt.Color.BLUE);
+       
+        javax.swing.GroupLayout pL = new javax.swing.GroupLayout(p);
+        p.setLayout(pL);
+        pL.setHorizontalGroup(
+                pL.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 619, Short.MAX_VALUE)
+                );
+        pL.setVerticalGroup(
+                pL.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 100, Short.MAX_VALUE)
+                );
+         this.add(p);
+       validate();
+       SwingUtilities.updateComponentTreeUI(this);
+       //this.update(this.getGraphics());
+       repaint();
+    }*/
     
-    // Declaração de variáveis - não modifique                     
-    private AreaDeConfiguracaoDeNavio areaDeConfiguracaoDeNavio;
+    // Declaração de variáveis - não modifique
+    private javax.swing.JTextField txfMensagem;
+    private javax.swing.JPanel painelControle;
+    private AreaCentral areaDeConfiguracaoDeNavio;
     private javax.swing.JButton btEnviarMensagem;
     private javax.swing.JButton btPoderEspecial;
     private javax.swing.JTextArea chat;
