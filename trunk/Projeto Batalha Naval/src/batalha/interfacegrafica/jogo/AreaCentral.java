@@ -22,6 +22,9 @@ import java.awt.event.*;
  *
  * @date 22/08/2007
  * @version 0.2
+ *
+ * @date 24/08/2007
+ * @version 0.3
  */
 public class AreaCentral extends JPanel{
     
@@ -31,7 +34,8 @@ public class AreaCentral extends JPanel{
      * A classe AreaCentral compartilha certos campos com a classe TabuleiroJogador (@see TabuleiroJogador), de forma
      * que estes campos representam informações sobre o último navio selecionado (i.e, qual foi o último botão clicado pelo usuário,
      * que por sua vez indica o navio selecionado). Para que este compartilhamento seja possível, deve-se utilizar o modificador
-     * "protected", de forma que apenas classes dentro do mesmo pacote tenham visibilidade sobre estes campos.
+     * "protected", de forma que apenas classes dentro do mesmo pacote tenham visibilidade sobre estes campos. Após a devida configuração
+     * esta classe passa a armazenar dados sobre a rede (@see DadosRede.java)
      * 
      * 
      * @author: Renato
@@ -56,12 +60,14 @@ public class AreaCentral extends JPanel{
     //Armazena a largura do último navio, e sua posição dentro do array de botões
     protected int larguraUltimoNavio = 0, 
                 posicaoUltimoNavio = -1;
-    
+    //Adicionado depois que os navios estiverem configurados
     private DadosRede dadosRede = null;
+    
     /**
      * Indica se o navio está configurado na vertical ou horizontal. Uma forma mais intuitiva, para o usuário, é adicionar um cursor que
      * possa indicar se o navio está na horizontal ou vertical. Este desenvolvimento está sendo feito por mim.
-     *
+     * 
+     * FEITO.
      * @author: Renato
      */
     protected boolean verticalShip = false;
@@ -69,6 +75,7 @@ public class AreaCentral extends JPanel{
     private ActionHandler actionHandler = null;
     //private PainelDoJogo painelDoJogo = null;
     private TabuleiroInimigo tabuleiroInimigo = null;
+    
     /**
      * Construtor da classe AreaCentral
      */
@@ -136,25 +143,37 @@ public class AreaCentral extends JPanel{
         
     }
     
+    /**
+     * Habilita o botão que confirma que tudo foi corretamente configurado.
+     * A ação ligada a este botão é liberar o tabuleiro do inimigo, para que o jogo inicie
+     *
+     * @TODO: AQUI ENTRA A LÓGICA DE "LOCK" DA QUAL EU FALAVA. DEVEMOS SINCRONIZAR O ENVIO DA MATRIZ LÓGICA E ÍNICIO DO JOGO.
+     */
     protected void habilitaBotaoOk(){
         
         botaoValidaPosicao.setEnabled(true);
         botaoValidaPosicao.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        
-                       // painelDoJogo.trocarPaineis();
+                       
+                       //Remove os elementos do painel pelo objeto DadosRede 
                        for(int i = 0; i < containerDosNavios.length; i++)
                            remove(containerDosNavios[i]);
                        remove(botaoValidaPosicao);
+                       
                        dadosRede = new DadosRede();
                        AreaCentral.this.add(dadosRede);
                        AreaCentral.this.validate();
                        AreaCentral.this.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(Color.BLACK),
-                "Dados da Rede"));
+                       BorderFactory.createLineBorder(Color.BLACK),
+                       "Dados da Rede"));
                        
+                       //Atualiza a interface
                        SwingUtilities.updateComponentTreeUI(AreaCentral.this);
+                       
+                       /**
+                        *"AQUI" ENTRA A LÓGICA DE SINCRONIZAÇÃO DE ENVIO DA MATRIZ LÓGICA. 
+                        */
                        tabuleiroInimigo.ligar();
                     }
                 }
@@ -206,6 +225,6 @@ public class AreaCentral extends JPanel{
                 posicaoUltimoNavio = 4;
             }
             
-            }
         }
+   }
 }

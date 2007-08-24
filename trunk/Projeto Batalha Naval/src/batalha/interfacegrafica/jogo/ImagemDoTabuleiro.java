@@ -1,9 +1,10 @@
-/*
- * ImagemDoTabuleiro.java
- *
- * Criado em 22 de Agosto de 2007, 18:25
- *
- */
+/**
+* ImagemDoTabuleiro.java
+*
+* Criado em 12 de Agosto de 2007, 22:18
+* 
+* O propósito desta classe é armazenar cada imagem que representa um navio e sua posição no tabuleiro
+*/
 
 package batalha.interfacegrafica.jogo;
 
@@ -11,8 +12,10 @@ import java.awt.Image;
 import java.awt.Point;
 
 /**
+ * @author Renato
  *
- * @author Usuario
+ * @date 24/08/2007
+ * @version 0.1
  */
 public class ImagemDoTabuleiro{
 
