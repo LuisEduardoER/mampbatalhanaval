@@ -1,10 +1,11 @@
 /*
  * TabuleiroInimigo.java
  *
- * Created on 22 de Agosto de 2007, 17:58
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * Criado em 22 de Agosto de 2007, 22:08
+ *  
+ * O propósito desta classe é implementar o tabuleiro do jogo propriamente dito. Sua implementação é realmente bem simples.
+ * Após configurar seu tabuleiro, o jogador poderá atacar seu inimigo através daqui. Como receberemos a matriz lógica do jogador oponente,
+ * basta analizarmos localmente esta matriz e configurar a imagem e contador de acertos.
  */
 
 package batalha.interfacegrafica.jogo;
@@ -16,37 +17,45 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
+ * @author Renato
  *
- * @author Usuario
+ * @date 22/08/2007
+ * @version 0.1
  */
 public class TabuleiroInimigo extends JPanel {
     
+    //ArrayList que armazena todas as imagens geradas. Todo clique neste tabuleiro irá gerar uma imagem que será adicionado
+    //neste ArrayList
     private ArrayList<ImagemDoTabuleiro> imagens = null;
     //Matriz lógica do tabuleiro, que armazena a posição e tipo do navio
     private String[][] matrizLogicaDoTabuleiro = null;
+    //Armazena a posição atual do cursor
     private Point posicaoCursor = null;
     //Instância de um objeto manipulador de eventos do mouse
     private MouseHandler mouseHandler = null;
     //Manipulador de eventos de movimento do mouse
     private MouseMotionHandler mouseMotionHandler = null;
-    
+    //Configura constantes para dizer se o jogador acertou água, navio ou se ele tentou clicar em uma posição já clicada.
     private static final int HIT_AGUA = 0,
                              HIT_NAVIO = 1,
                              HIT_PREV_HIT = 2;
     
+    /**
+     * Construtor da classe TabuleiroInimigo
+     */
     public TabuleiroInimigo(){
     
          this.imagens = new ArrayList<ImagemDoTabuleiro>();
          this.setBorder( BorderFactory.createLineBorder( new Color(0,100,90) ) );
          this.mouseHandler = new MouseHandler();
          this.mouseMotionHandler = new MouseMotionHandler();
-         //addMouseListener(this.mouseHandler);
-         //addMouseMotionListener(this.mouseMotionHandler);
-        //this.posicaoCursor = new Point();
-         this.setEnabled(false);
+         this.setEnabled(false); //Inicialmente está desabilitado
          
     }
     
+    /**
+     * Habilita os handlers de eventos e o próprio painel
+     */
     public void ligar(){
         
         setEnabled(true);
@@ -56,11 +65,17 @@ public class TabuleiroInimigo extends JPanel {
         repaint();
     }
     
+    /**
+     * Configura a matriz lógica utilizada. Esta matriz virá pela rede.
+     */
     public void setMatrizLogica(String[][] matrizLogicaDoTabuleiro){
         
         this.matrizLogicaDoTabuleiro = matrizLogicaDoTabuleiro;
     }
     
+    /**
+     * Pinta o painel
+     */
     protected void paintComponent(Graphics g){
     
         super.paintComponent(g);
@@ -82,9 +97,9 @@ public class TabuleiroInimigo extends JPanel {
 	    g2.drawLine(0,i*25,250,i*25);
         }
         
-        //if(imagens.isEmpty()) return;
         if(posicaoCursor == null || posicaoCursor.x == -1) return;
         
+        //Percorre o array desenhando as imagens armazenadas no ArrayList
         for(ImagemDoTabuleiro i: imagens)
             g.drawImage(i.getImagem(),i.getPontoInicial().x,i.getPontoInicial().y,this);
         
@@ -92,6 +107,9 @@ public class TabuleiroInimigo extends JPanel {
         g2.fill3DRect(p.x,p.y,25,25,false);
     }
     
+    /**
+     * Normaliza o ponto da imagem. Resolvi sobrescrever a MESMA FUNÇÃO da classe TabuleiroJogador apenas por claridade.
+     */
     private Point normalizaPonto(int x, int y){
         
         int xNormalizado = x/25;
@@ -101,8 +119,10 @@ public class TabuleiroInimigo extends JPanel {
         
     }
     
+    /**
+     * Configura a imagem no tabuleiro de jogo, e envia esta mesma imagem para que seu inimigo configure a imagem no seu tabuleiro.
+     */
     private void configuraHit(int x, int y) {
-        
         
         int checkPosicao = getHit(x,y);
         Point p = normalizaPonto(x,y);
@@ -114,34 +134,58 @@ public class TabuleiroInimigo extends JPanel {
             imagens.add(new ImagemDoTabuleiro(new ImageIcon("aguaHit.jpg").getImage(), p));
             repaint();
             System.out.println("Acertou agua!");
+            
+            /**
+             * AQUI VEM A LÓGICA DE ENVIAR A IMAGEM E PONTO DE ACERTO PARA O JOGADOR ADVERSÁRIO, PELA REDE.
+             * 
+             */
+            
+        //Acertou navio! Viva!    
         } else if(checkPosicao == HIT_NAVIO){
             
             matrizLogicaDoTabuleiro[x/25][y/25] = "X";
             imagens.add(new ImagemDoTabuleiro(new ImageIcon("navioHit.jpg").getImage(), p));
             repaint();
             System.out.println("Acertou navio!");
+            
+            /**
+             * AQUI VEM A LÓGICA DE ENVIAR A IMAGEM E PONTO DE ACERTO PARA O JOGADOR ADVERSÁRIO, PELA REDE.
+             * 
+             */
+            
         } else{
             
             JOptionPane.showMessageDialog(null,"Esta posição já foi clicada!", "Posição já escolhida",JOptionPane.INFORMATION_MESSAGE);
+            
+            /**
+             * PROCESSAMENTO LOCAL. APENAS DIZ AO JOGADOR QUE ELE CLICOU EM UMA POSIÇÃO QUE JÁ FOI CLICADA.
+             * ISSO SIGNIFICA QUE ELE AINDA NÃO PERDEU A VEZ.
+             */
         }
     }
     
-   /* public void setMatrizLogica(String matrizLogica[][]){
-        
-        this.matrizLogicaDoTabuleiro = matrizLogica;
-    }*/
+    //Verifica o que o jogador acertou
     private int getHit(int x, int y){
         
         int xHit = x/25;
         int yHit = y/25;
         
         if(matrizLogicaDoTabuleiro[xHit][yHit].equalsIgnoreCase("agua")) return HIT_AGUA;
+        //Acertou alguma coisa que não era navio (por exemplo, alguma outra parte já acertada)
         else if(matrizLogicaDoTabuleiro[xHit][yHit].equalsIgnoreCase("X") || matrizLogicaDoTabuleiro[xHit][yHit].equalsIgnoreCase("Y"))
                 return HIT_PREV_HIT;
         
         return HIT_NAVIO;
     }
     
+    /**
+     * MouseHandler.java
+     *
+     * Criado em 22 de Agosto de 2007, 22:08
+     *
+     * O propósito desta classe é lidar com eventos de mouse sobre o tabuleiro, de forma a saber em qual posição 
+     * será inserida a imagem
+     */
     private class MouseHandler extends MouseAdapter{
         
         public void mousePressed(MouseEvent me){
@@ -152,6 +196,13 @@ public class TabuleiroInimigo extends JPanel {
         
     }
     
+    /**
+     * MouseMotionHandler.java
+     *
+     * Criado em 22 de Agosto de 2007, 22:08
+     *
+     * O propósito desta classe é lidar com eventos de mouse sobre o tabuleiro, de forma a ajustar o ponto atual do cursor
+     */
     private class MouseMotionHandler extends MouseMotionAdapter{
         
         public void mouseMoved(MouseEvent me){

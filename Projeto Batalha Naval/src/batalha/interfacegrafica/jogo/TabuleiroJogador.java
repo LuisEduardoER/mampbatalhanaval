@@ -3,10 +3,8 @@
  *
  * Criado em 12 de Agosto de 2007, 22:08
  *  
- * O propósito desta classe é implementar o tabuleiro do jogo. Na verdade,
- * o tabuleiro do jogador não terá nenhum listener de evento associado.
- * Apenas o tabuleiro "do outro" jogador conterá este listener, mas é inútil
- * criar duas classes distintas; basta remover o listener do tabuleiro do jogador.
+ * O propósito desta classe é implementar o tabuleiro de configuração. Este tabuleiro será usado posteriormente apenas para refletir
+ * o que acontece no jogo (se o inimigo acertou seu navio).
  */
 
 package batalha.interfacegrafica.jogo;
@@ -92,7 +90,7 @@ public class TabuleiroJogador extends JPanel{
     /**
      * Remove o listener de evento do mouse, depois que o tabuleiro já estiver configurado
      */
-    public void setListenerOff(){
+    public void desligarHandlers(){
             
         removeMouseListener(this.mouseHandler);
         removeMouseMotionListener(this.mouseMotionHandler);
@@ -174,7 +172,7 @@ public class TabuleiroJogador extends JPanel{
                  //Se todos os navios estão configurados, retira-se o listener de evento do tabuleiro.
                  if(++contadorPosicionamentoOk == 5){
                      
-                     setListenerOff();
+                     desligarHandlers();
                      //painelDoJogo.trocarPaineis();
                      areaDeConfiguracaoDeNavio.habilitaBotaoOk();
                  }
@@ -267,13 +265,7 @@ public class TabuleiroJogador extends JPanel{
         System.out.println("\n\n");
     }
     
-   /**
-    * ImagemDoTabuleiro.java
-    *
-    * Criado em 12 de Agosto de 2007, 22:18
-    * 
-    * O propósito desta classe é armazenar cada imagem que representa um navio e sua posição no tabuleiro
-    */
+
     
     /**
      * MouseHandler.java
