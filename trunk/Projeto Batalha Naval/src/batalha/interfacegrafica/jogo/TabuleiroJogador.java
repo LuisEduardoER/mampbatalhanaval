@@ -31,7 +31,7 @@ import java.awt.event.*;
 public class TabuleiroJogador extends JPanel{
     
     //Referência à àrea de configuração dos navios
-    private AreaCentral areaDeConfiguracaoDeNavio = null;
+    private AreaCentral areaCentral = null;
     //Instância de um objeto manipulador de eventos do mouse
     private MouseHandler mouseHandler = null;
     //Manipulador de eventos de movimento do mouse
@@ -64,11 +64,15 @@ public class TabuleiroJogador extends JPanel{
      * 
      * 
      * 
-     * @param areaDeConfiguracaoDeNavio referência ao objeto da classe AreaCentral
+     * 
+     * @param areaCentral referência ao objeto da classe AreaCentral
      */ 
     public TabuleiroJogador(AreaCentral areaDeConfiguracaoDeNavio){
         
-        this.areaDeConfiguracaoDeNavio = areaDeConfiguracaoDeNavio;
+        //this.setSize(250,250);
+        this.setPreferredSize(new java.awt.Dimension(250,250));
+        
+        this.areaCentral = areaDeConfiguracaoDeNavio;
         
         this.setBorder( BorderFactory.createLineBorder( new Color(0,100,90) ) );
         this.imagensDoTabuleiro = new ImagemDoTabuleiro[5];
@@ -110,7 +114,7 @@ public class TabuleiroJogador extends JPanel{
 	g2.setPaint(gp);
 	
         //Desenha o tabuleiro, de acordo com o gradiente
-        g2.fillRect(0,0,250,250);
+        g2.fillRect(0,0,250,251);
 
         g2.setColor(new Color(0,100,90));
         
@@ -130,14 +134,14 @@ public class TabuleiroJogador extends JPanel{
            }
        }
        
-       if(areaDeConfiguracaoDeNavio.imagemUltimoNavio == null ) return; 
+       if(areaCentral.imagemUltimoNavio == null ) return; 
        Point p = normalizaPonto(posicaoCursor.x, posicaoCursor.y);
        //System.out.println("Ponto p: "+p.getX()+","+p.getY());
        //System.out.println("Ponto p: "+p.x+","+p.y);
-       if (areaDeConfiguracaoDeNavio.verticalShip) g2.fill3DRect(p.x,
-                 p.y, 25, areaDeConfiguracaoDeNavio.larguraUltimoNavio, false);
+       if (areaCentral.verticalShip) g2.fill3DRect(p.x,
+                 p.y, 25, areaCentral.larguraUltimoNavio, false);
        else g2.fill3DRect(p.x,
-                 p.y, areaDeConfiguracaoDeNavio.larguraUltimoNavio, 25, false);
+                 p.y, areaCentral.larguraUltimoNavio, 25, false);
     }
     
     /**
@@ -156,25 +160,25 @@ public class TabuleiroJogador extends JPanel{
         if(checkPosicao){
                  
                  //Atualiza o nome da imagem para "X.v", onde X é o nome do navio solicitado.
-                 if(areaDeConfiguracaoDeNavio.verticalShip)
-                        imagensDoTabuleiro[areaDeConfiguracaoDeNavio.posicaoUltimoNavio] = 
-                            new ImagemDoTabuleiro((new ImageIcon(nomeDoNavio+".jpg").getImage()), normalizaPonto(x,y));
-                 else imagensDoTabuleiro[areaDeConfiguracaoDeNavio.posicaoUltimoNavio] = 
-                            new ImagemDoTabuleiro(areaDeConfiguracaoDeNavio.imagemUltimoNavio, normalizaPonto(x,y));
+                 if(areaCentral.verticalShip)
+                        imagensDoTabuleiro[areaCentral.posicaoUltimoNavio] = 
+                            new ImagemDoTabuleiro((new ImageIcon(nomeDoNavio+".gif").getImage()), normalizaPonto(x,y));
+                 else imagensDoTabuleiro[areaCentral.posicaoUltimoNavio] = 
+                            new ImagemDoTabuleiro(areaCentral.imagemUltimoNavio, normalizaPonto(x,y));
                  
                  //Reconfigura a área de navio
-                 areaDeConfiguracaoDeNavio.disableUltimoNavioSelecionado();
-                 areaDeConfiguracaoDeNavio.nomeUltimoNavio = null;
-                 areaDeConfiguracaoDeNavio.larguraUltimoNavio = -1; 
-                 areaDeConfiguracaoDeNavio.posicaoUltimoNavio = -1;
-                 areaDeConfiguracaoDeNavio.imagemUltimoNavio = null;
+                 areaCentral.disableUltimoNavioSelecionado();
+                 areaCentral.nomeUltimoNavio = null;
+                 areaCentral.larguraUltimoNavio = -1; 
+                 areaCentral.posicaoUltimoNavio = -1;
+                 areaCentral.imagemUltimoNavio = null;
                  
                  //Se todos os navios estão configurados, retira-se o listener de evento do tabuleiro.
                  if(++contadorPosicionamentoOk == 5){
                      
                      desligarHandlers();
                      //painelDoJogo.trocarPaineis();
-                     areaDeConfiguracaoDeNavio.habilitaBotaoOk();
+                     areaCentral.habilitaBotaoOk();
                  }
                  repaint();
         } 
@@ -210,7 +214,7 @@ public class TabuleiroJogador extends JPanel{
         
        // imprimeTabuleiro();
         
-        if(areaDeConfiguracaoDeNavio.verticalShip){
+        if(areaCentral.verticalShip){
           //  System.out.println("VERTICAL\n");    
             int xInicialMatriz = (int)(x/25); 
             int yInicialMatriz = (int)(y/25); 
@@ -284,32 +288,32 @@ public class TabuleiroJogador extends JPanel{
             //Posiciona uma imagem no tabuleiro
             if(me.getButton() == me.BUTTON1){
                 
-                if(areaDeConfiguracaoDeNavio.nomeUltimoNavio == null && areaDeConfiguracaoDeNavio.posicaoUltimoNavio == -1){
+                if(areaCentral.nomeUltimoNavio == null && areaCentral.posicaoUltimoNavio == -1){
                     JOptionPane.showMessageDialog(null,"SELECIONE UM NAVIO PARA POSICIONAR NO TABULEIRO.",
                     "SELECIONE UM NAVIO", JOptionPane.INFORMATION_MESSAGE /*Icone vem aqui.*/);
                     return;
                 }
                 
-                if(areaDeConfiguracaoDeNavio != null){
+                if(areaCentral != null){
                     
-                    if(areaDeConfiguracaoDeNavio.verticalShip){
+                    if(areaCentral.verticalShip){
                         
-                        nomeDoNavio = areaDeConfiguracaoDeNavio.nomeUltimoNavio+"v";
+                        nomeDoNavio = areaCentral.nomeUltimoNavio+"v";
                         //System.out.println("Nome do navio, dentro do tabuleiro: "+nomeDoNavio);
                         larguraNavio = 25;
-                        alturaNavio = areaDeConfiguracaoDeNavio.larguraUltimoNavio;
+                        alturaNavio = areaCentral.larguraUltimoNavio;
                         //System.out.println("Altura do navio, dentro do tabuleiro: "+alturaNavio);
                     }else{
                         
-                        nomeDoNavio = areaDeConfiguracaoDeNavio.nomeUltimoNavio;
+                        nomeDoNavio = areaCentral.nomeUltimoNavio;
                         alturaNavio = 25;
                         //System.out.println("Nome do navio, dentro do tabuleiro,sem ser vertical: "+nomeDoNavio);
-                        larguraNavio = areaDeConfiguracaoDeNavio.larguraUltimoNavio;
+                        larguraNavio = areaCentral.larguraUltimoNavio;
                     }   //System.out.println("Largura do navio, dentro do tabuleiro,sem ser vertical: "+larguraNavio);
                     
                     //System.out.println("Ponto x: "+me.getX()+", ponto y: "+me.getY());
                     configuraImagem(me.getX(),me.getY());
-                    areaDeConfiguracaoDeNavio.verticalShip = false;
+                    areaCentral.verticalShip = false;
                 }
                 return;
             }
@@ -317,7 +321,7 @@ public class TabuleiroJogador extends JPanel{
             //Altera o modo em que a imagem será colocada
             if(me.getButton() == me.BUTTON3){
                 
-                areaDeConfiguracaoDeNavio.verticalShip = !areaDeConfiguracaoDeNavio.verticalShip;
+                areaCentral.verticalShip = !areaCentral.verticalShip;
                 repaint();
             }
             

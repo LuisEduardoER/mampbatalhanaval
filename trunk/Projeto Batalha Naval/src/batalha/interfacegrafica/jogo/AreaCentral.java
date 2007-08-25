@@ -12,6 +12,8 @@ import batalha.interfacegrafica.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 /**
  *
@@ -39,15 +41,26 @@ public class AreaCentral extends JPanel{
      * 
      * 
      * @author: Renato
+     *
+     * Mudança: Deixei a antiga classe AreaDeConfiguracaoDeNavio como um gerenciador de Paineis. Fiz pois como existia  a necessidade
+     * de se modificar seu conteúdo após a devida configuração dos navios, seria mais fácil apenas remover o conteúdo deste painel e
+     * adicionar o painel DadosRede aqui. Para isto, utilizei o gerenciador de layout CardLayout, que permite que dois paineis sejam
+     * instanciados ao mesmo tempo, mas um fica "embaixo" do outro (funcionando tipo como um deck de cartas). Para quem quiser saber
+     * mais sobre CardLayout: http://java.sun.com/docs/books/tutorial/uiswing/layout/card.html
+     *
+     * @author Renato
      */
     
     //Botões que o usuário deve escolher para escolher seu navio
     private JButton[] containerDosNavios = null;
-    private JButton botaoValidaPosicao = null;
+    //Botão de validação da configuração. Só deve ser validado depois que o jogador tenha configurado seus navios E que tenha recebido
+    //a matriz lógica do inimigo
+    private JButton botaoValidaPosicionamento = null;
     //Array com as imagens de cada navio (são ícones para os botões)
     private ImageIcon[] imagens = null;
     //Array que armazena o nome dos navios
     protected String[] nomeDosNavios = null;
+    
     /**
      * @TODO: O pacote que está sendo utilizado para carregar as imagens é o próprio projeto. Precisamos descobrir como fazer o carre-
      * gamento correto.
@@ -60,9 +73,6 @@ public class AreaCentral extends JPanel{
     //Armazena a largura do último navio, e sua posição dentro do array de botões
     protected int larguraUltimoNavio = 0, 
                 posicaoUltimoNavio = -1;
-    //Adicionado depois que os navios estiverem configurados
-    private DadosRede dadosRede = null;
-    
     /**
      * Indica se o navio está configurado na vertical ou horizontal. Uma forma mais intuitiva, para o usuário, é adicionar um cursor que
      * possa indicar se o navio está na horizontal ou vertical. Este desenvolvimento está sendo feito por mim.
@@ -71,39 +81,72 @@ public class AreaCentral extends JPanel{
      * @author: Renato
      */
     protected boolean verticalShip = false;
+    
+    //Adicionado depois que os navios estiverem configurados
+    private DadosRede dadosRede = null;
+    //Cria um painel que armazena os botões dos navios (funciona como a antiga classe AreaDeConfiguracaoDeNavio)
+    private JPanel painelConteudoNavios = null;
     //Handler para os botões, configurando os campos compartilhados
     private ActionHandler actionHandler = null;
-    //private PainelDoJogo painelDoJogo = null;
-    private TabuleiroInimigo tabuleiroInimigo = null;
+    //Referência ao tabuleiro inimigo, que será habilitado após a devida configuração dos navios
+    private TabuleiroInimigo tabuleiroInimigo = null;    
+
+    //Cria uma fonte para o título da borda
+    private Font f = new Font("Arial Bold",Font.BOLD,10);
+    //Constantes para o uso do CardLayout, que gerencia o layout deste objeto.
+    private static final String NAVIOS_PANE = "Conteudo dos Navios",
+                                REDE_PANE = "Conteudo da Rede";
     
     /**
      * Construtor da classe AreaCentral
      */
     public AreaCentral(TabuleiroInimigo tabuleiroInimigo) {
         
+        //Instancia um gerenciador de layout do tipo CardLayout, e configura o tamanho do painel
+        //Para quem quiser ver como funciona o SpringLayout, http://java.sun.com/docs/books/tutorial/uiswing/layout/card.html
+        CardLayout layout = new CardLayout();
+        this.setPreferredSize(new Dimension(621,120));        
+        this.setLayout(layout);
+        
+        //Armazena as referências para o tabuleiro inimigo
+        this.tabuleiroInimigo = tabuleiroInimigo;
+        
+        //Configura o painel que armazenará os botões dos navios
+        painelConteudoNavios = new JPanel();
+        painelConteudoNavios.setPreferredSize(new Dimension(620,119));
+        
+        //Instancia um painel DadosRede
+        dadosRede = new DadosRede();
+        
+        //Configura os botões, imagens e nomes referentes aos navios
         containerDosNavios = new JButton[5];
         imagens = new ImageIcon[5];
         nomeDosNavios = new String[5];
         actionHandler = new ActionHandler();
-        botaoValidaPosicao = new JButton();
-        this.tabuleiroInimigo = tabuleiroInimigo;
-        //Cria uma borda com título sobre o painel
-        this.setBorder(BorderFactory.createTitledBorder(
+        
+        //Cria o botão de validação de posicionamemto
+        botaoValidaPosicionamento = new JButton();
+
+        //Cria uma borda com título sobre os paineis
+        painelConteudoNavios.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.BLACK),
-                "Posicione seus navios"));
+                "Posicione seus navios", TitledBorder.CENTER, TitledBorder.TOP, f, Color.blue));
+                
+        dadosRede.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.BLACK),
+                "Dados da rede", TitledBorder.CENTER, TitledBorder.TOP, f, Color.blue));
         
-        this.setLayout(new GridLayout(1,5));
-        
+        //Configura os nomes de cada navio
         nomeDosNavios[0] = "patrulha";
         nomeDosNavios[1] = "submarino";
         nomeDosNavios[2] = "encouracado";
         nomeDosNavios[3] = "seawolf";
         nomeDosNavios[4] = "portaavioes";
        
-        
+        //Inicializa as imagens
         for(int i = 0; i < 5; i++)
         { 
-            imagens[i] = new ImageIcon(INICIO_IMAGENS+nomeDosNavios[i]+".jpg");
+            imagens[i] = new ImageIcon(INICIO_IMAGENS+nomeDosNavios[i]+".gif");
         }
         
         //Apenas inicializa os botões. A configuração de nomes e tamanho de cada botão foi configurada fora do laço, logo abaixo.
@@ -112,13 +155,15 @@ public class AreaCentral extends JPanel{
             containerDosNavios[i] = new JButton();
             containerDosNavios[i].addActionListener(actionHandler);
             containerDosNavios[i].setIcon(imagens[i]);
-            this.add(containerDosNavios[i]);
+            painelConteudoNavios.add(containerDosNavios[i]);
         }
         
-        this.add(botaoValidaPosicao);
+        //Adiciona o botão de validação no painel
+        painelConteudoNavios.add(botaoValidaPosicionamento);
         
+        //Configura dimensoes e texto para os botões
         containerDosNavios[0].setText("Patrulha");
-        containerDosNavios[0].setBounds(30,30,160,40);
+        containerDosNavios[0].setBounds(0,0,90,40);
         containerDosNavios[1].setText("Submarino");
         containerDosNavios[1].setBounds(200,30,185,40);
         containerDosNavios[2].setText("Encouraçado");
@@ -127,9 +172,15 @@ public class AreaCentral extends JPanel{
         containerDosNavios[3].setBounds(30,80,210,40);
         containerDosNavios[4].setText("Porta aviões");
         containerDosNavios[4].setBounds(250,80,250,40);
-        botaoValidaPosicao.setText("Ok!");
-        botaoValidaPosicao.setBounds(510,80,80,40);
-        botaoValidaPosicao.setEnabled(false);
+        botaoValidaPosicionamento.setText("Ok!");
+        botaoValidaPosicionamento.setBounds(510,80,80,60);
+        botaoValidaPosicionamento.setEnabled(false);
+        
+        //Adiciona os dois paineis. Lembrando sempre que com o CardLayout apenas o primeiro adicionado será visto. Para trocar
+        //pelo painel de baixo, devemos utilizar o método show (é utilizado na implementação de listener do botão, no método
+        //habilitaBotaoOk
+        this.add(painelConteudoNavios,NAVIOS_PANE);
+        this.add(dadosRede,REDE_PANE);
     }
    
     /**
@@ -151,35 +202,27 @@ public class AreaCentral extends JPanel{
      */
     protected void habilitaBotaoOk(){
         
-        botaoValidaPosicao.setEnabled(true);
-        botaoValidaPosicao.addActionListener(
+        /**
+         * AQUI ENTRA UMA DAS LÓGICAS MAIS DIFÍCEIS DESTE JOGO. DEVEMOS SINCRONIZAR A HABILITAÇÃO DESTE BOTÃO SOMENTE
+         * QUANDO OS DOIS JOGADORES TIVEREM ACABADO DE POSICIONAR SEUS NAVIOS E TIVEREM ENVIADO SUA MATRIZ LÓGICA PARA 
+         * O OUTRO JOGADOR.
+         */
+        botaoValidaPosicionamento.setEnabled(true);
+        //Habilita o botão
+        botaoValidaPosicionamento.addActionListener(
+                //Classe anônima para ouvir eventos sobre o botão
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                       
-                       //Remove os elementos do painel pelo objeto DadosRede 
-                       for(int i = 0; i < containerDosNavios.length; i++)
-                           remove(containerDosNavios[i]);
-                       remove(botaoValidaPosicao);
-                       
-                       dadosRede = new DadosRede();
-                       AreaCentral.this.add(dadosRede);
-                       AreaCentral.this.validate();
-                       AreaCentral.this.setBorder(BorderFactory.createTitledBorder(
-                       BorderFactory.createLineBorder(Color.BLACK),
-                       "Dados da Rede"));
-                       
-                       //Atualiza a interface
-                       SwingUtilities.updateComponentTreeUI(AreaCentral.this);
-                       
-                       /**
-                        *"AQUI" ENTRA A LÓGICA DE SINCRONIZAÇÃO DE ENVIO DA MATRIZ LÓGICA. 
-                        */
+                       //Seleciona o painel a ser exibido pelo CardLayout. Percebam que não é necessário nenhum tipo de validação
+                       //do container, isto é feito automaticamente pelo próprio gerenciador de layout CardLayout
+                       //Esse está nos meus favoritos! ;-)
+                       CardLayout c = (CardLayout) AreaCentral.this.getLayout();
+                       c.show(AreaCentral.this, REDE_PANE);
+                       //Habilita o tabuleiro inimigo
                        tabuleiroInimigo.ligar();
                     }
                 }
         );
-
-        repaint();
     }
     
     

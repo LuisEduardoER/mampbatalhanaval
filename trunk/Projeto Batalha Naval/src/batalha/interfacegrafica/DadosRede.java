@@ -8,6 +8,7 @@
 
 package batalha.interfacegrafica;
 
+import java.awt.Dimension;
 import javax.swing.*;
 
 /**
@@ -22,36 +23,50 @@ public class DadosRede extends JPanel{
     private JLabel lbDadosEnviados = null, lbDadosRecebidos = null;
             
     public DadosRede() {
-     
-        //Configuração de layout
-        Box layoutBox1 = Box.createVerticalBox();
-        Box layoutBox2 = Box.createVerticalBox();
-        this.setBounds(16,13,610,90);
+        
+        //Instância um gerenciador de layout do tipo SpringLayout, e configura o tamanho do painel
+        //Para quem quiser ver como funciona o SpringLayout, http://java.sun.com/docs/books/tutorial/uiswing/layout/spring.html
+        //Álias, dêem todos uma boa lida nos tutoriais da Sun, resolvem muitas dores de cabeça hehe ;-)
+        SpringLayout layout = new SpringLayout();
+        this.setLayout(layout);
+        this.setPreferredSize(new Dimension(620,119));
+        
         this.areaEntrada = new JTextArea();
         this.areaSaida = new JTextArea();
         this.lbDadosEnviados = new JLabel("Dados Enviados");
         this.lbDadosRecebidos = new JLabel("Dados Recebidos");
         
-        lbDadosRecebidos.setBounds(65,15,30,15);
-        areaEntrada.setBounds(100,55,100,60);
-        areaEntrada.setRows(5);
-        areaEntrada.setColumns(15);
-        areaEntrada.setEditable(false);
+        JScrollPane paneEntrada = new JScrollPane();
+        JScrollPane paneSaida = new JScrollPane();
         
-        lbDadosEnviados.setBounds(205,15,30,15);
-        areaSaida.setBounds(240,55,100,60);
-        areaSaida.setRows(5);
-        areaSaida.setColumns(15);
-        areaSaida.setEditable(false);
+        //Instancia dois visualizadores para as textAreas
+        paneEntrada.setViewportView(areaEntrada);
+        paneEntrada.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        paneEntrada.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         
-        layoutBox1.add(lbDadosRecebidos);
-        layoutBox2.add(lbDadosEnviados);
-        layoutBox1.add(areaEntrada);
-        layoutBox2.add(areaSaida);
-        layoutBox1.setBounds(40,13,300,90);
-        layoutBox1.setBounds(340,13,300,90);
-        this.add(layoutBox1);
-        this.add(layoutBox2);
+        paneSaida.setViewportView(areaSaida);
+        paneSaida.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        paneSaida.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        
+        this.add(lbDadosEnviados);
+        this.add(lbDadosRecebidos);
+        this.add(paneEntrada);
+        this.add(paneSaida);
+        
+        //Configura as dimensões corretas
+        lbDadosEnviados.setPreferredSize(new Dimension(100,20));
+        lbDadosRecebidos.setPreferredSize(new Dimension(100,20));
+        areaEntrada.setPreferredSize(new Dimension(150,60));
+        areaSaida.setPreferredSize(new Dimension(150,60));
+        
+        //Configura o layout, adicionando espaçamento entre os componentes
+        layout.putConstraint(SpringLayout.WEST, lbDadosEnviados, 130, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.WEST, paneEntrada, 130, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.NORTH, paneEntrada, 5, SpringLayout.SOUTH, lbDadosEnviados);
+        layout.putConstraint(SpringLayout.WEST, lbDadosRecebidos, 390, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.WEST, paneSaida, 390, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.NORTH, paneSaida, 5, SpringLayout.SOUTH, lbDadosRecebidos);
+
     }
     
     /**
