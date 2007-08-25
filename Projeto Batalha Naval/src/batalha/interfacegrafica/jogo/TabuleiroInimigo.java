@@ -11,10 +11,10 @@
 package batalha.interfacegrafica.jogo;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Random;
 
 /**
  * @author Renato
@@ -44,13 +44,20 @@ public class TabuleiroInimigo extends JPanel {
      * Construtor da classe TabuleiroInimigo
      */
     public TabuleiroInimigo(){
-    
-         this.imagens = new ArrayList<ImagemDoTabuleiro>();
+         
+        //Configura dimensão preferida do painel
+         this.setPreferredSize(new Dimension(249,249));
+         //Cria uma borda
          this.setBorder( BorderFactory.createLineBorder( new Color(0,100,90) ) );
+         
+         //Inicializa o arrayList para armazenar as imagens
+         this.imagens = new ArrayList<ImagemDoTabuleiro>();
+         
+         //Configura listeners
          this.mouseHandler = new MouseHandler();
          this.mouseMotionHandler = new MouseMotionHandler();
          this.setEnabled(false); //Inicialmente está desabilitado
-         
+         setMatrizLogica(null); //teste apenas
     }
     
     /**
@@ -70,7 +77,23 @@ public class TabuleiroInimigo extends JPanel {
      */
     public void setMatrizLogica(String[][] matrizLogicaDoTabuleiro){
         
-        this.matrizLogicaDoTabuleiro = matrizLogicaDoTabuleiro;
+        //this.matrizLogicaDoTabuleiro = matrizLogicaDoTabuleiro;
+        
+        /**
+         * APENAS PARA TESTE!!!
+         */
+        String teste[][] = new String[10][10];
+        Random gerador = new Random();
+        for(int i = 0; i < 10; i++){
+            for(int j = 0; j < 10; j++){
+                int k  = 1+gerador.nextInt(3);
+                if(k == 1) teste[i][j] = "agua";
+                else if(k == 2) teste[i][j] = "navio"; //apenas para testar
+                else teste[i][j] = "X"; //já clicou lá
+            }
+        }
+        
+        this.matrizLogicaDoTabuleiro = teste;
     }
     
     /**
@@ -86,7 +109,7 @@ public class TabuleiroInimigo extends JPanel {
 	g2.setPaint(gp);
 	
         //Desenha o tabuleiro, de acordo com o gradiente
-        g2.fillRect(0,0,250,250);
+        g2.fillRect(0,0,250,251);
 
         g2.setColor(new Color(0,100,90));
         
@@ -131,7 +154,7 @@ public class TabuleiroInimigo extends JPanel {
         if(checkPosicao == HIT_AGUA){
             
             matrizLogicaDoTabuleiro[x/25][y/25] = "Y";
-            imagens.add(new ImagemDoTabuleiro(new ImageIcon("aguaHit.jpg").getImage(), p));
+            imagens.add(new ImagemDoTabuleiro(new ImageIcon("splash.gif").getImage(), p));
             repaint();
             System.out.println("Acertou agua!");
             
@@ -144,7 +167,7 @@ public class TabuleiroInimigo extends JPanel {
         } else if(checkPosicao == HIT_NAVIO){
             
             matrizLogicaDoTabuleiro[x/25][y/25] = "X";
-            imagens.add(new ImagemDoTabuleiro(new ImageIcon("navioHit.jpg").getImage(), p));
+            imagens.add(new ImagemDoTabuleiro(new ImageIcon("explodido.gif").getImage(), p));
             repaint();
             System.out.println("Acertou navio!");
             
