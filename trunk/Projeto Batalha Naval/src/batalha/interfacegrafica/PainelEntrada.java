@@ -6,18 +6,28 @@
 
 package batalha.interfacegrafica;
 
+import javax.swing.*;
+
 /**
  *
  * @author  Usuario
  */
 public class PainelEntrada extends javax.swing.JPanel {
+
+    protected JFrame teste = new JFrame();
     
     /** Creates new form PainelEntrada */
     public PainelEntrada() {
         initComponents();
         adicionaListeners();
+        this.setVisible(true);
+        teste.setContentPane(this);
+        teste.setSize(653,610);
+        teste.setVisible(true);
+        teste.setResizable(false);
+        teste.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-    
+   
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -51,6 +61,11 @@ public class PainelEntrada extends javax.swing.JPanel {
         jTxNovoIp.setText("Digite aqui um novo IP para se conectar");
 
         jBtIniciarJogo.setText("JOGAR!");
+        jBtIniciarJogo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jBtIniciarJogoMouseClicked(evt);
+            }
+        });
 
         jROpcaoServidor.setText("Servidor");
         jROpcaoServidor.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -120,9 +135,16 @@ public class PainelEntrada extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jBtIniciarJogoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtIniciarJogoMouseClicked
+
+        PainelDoJogo painelDoJogo = new PainelDoJogo();
+        painelDoJogo.setVisible(true);
+        this.setVisible(false);
+        teste.setContentPane(painelDoJogo);
+        
+    }//GEN-LAST:event_jBtIniciarJogoMouseClicked
     
-            
-            
     
     // Declaração de variáveis - não modifique//GEN-BEGIN:variables
     private javax.swing.JButton jBtIniciarJogo;
