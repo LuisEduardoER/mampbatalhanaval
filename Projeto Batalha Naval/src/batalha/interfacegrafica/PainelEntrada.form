@@ -137,6 +137,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="JOGAR!"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jBtIniciarJogoMouseClicked"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="jROpcaoServidor">
       <Properties>
