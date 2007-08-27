@@ -40,6 +40,9 @@ public class TabuleiroInimigo extends JPanel {
                              HIT_NAVIO = 1,
                              HIT_PREV_HIT = 2;
     
+    //Imagem do cursor
+    private Image imagemCursor = null;
+
     /**
      * Construtor da classe TabuleiroInimigo
      */
@@ -53,6 +56,7 @@ public class TabuleiroInimigo extends JPanel {
          //Inicializa o arrayList para armazenar as imagens
          this.imagens = new ArrayList<ImagemDoTabuleiro>();
          
+         imagemCursor = new ImageIcon("cursor_pata.gif").getImage();
          //Configura listeners
          this.mouseHandler = new MouseHandler();
          this.mouseMotionHandler = new MouseMotionHandler();
@@ -127,7 +131,8 @@ public class TabuleiroInimigo extends JPanel {
             g.drawImage(i.getImagem(),i.getPontoInicial().x,i.getPontoInicial().y,this);
         
         Point p = normalizaPonto(posicaoCursor.x, posicaoCursor.y);
-        g2.fill3DRect(p.x,p.y,25,25,false);
+        //g2.fill3DRect(p.x,p.y,25,25,false);
+        g.drawImage(imagemCursor,p.x,p.y,this);
     }
     
     /**
