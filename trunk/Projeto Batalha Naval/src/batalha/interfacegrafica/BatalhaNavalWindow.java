@@ -62,8 +62,8 @@ public class BatalhaNavalWindow extends JFrame{
     private JButton botaoOk = null;
     //Armazena o apelido do jogador
     private String apelidoJogador = null;
-    //Armazena o ip do jogador(no caso ser o servidor, este valor será colocado como host)
-    private String ip = null;
+    //Painel do Jogo
+    private PainelDoJogo painel = null;
     
     public BatalhaNavalWindow() {
         
@@ -73,11 +73,12 @@ public class BatalhaNavalWindow extends JFrame{
     private void configuraFrame() {
         
         //Configura o layout do frame
-        layoutFrame = new CardLayout();
-        this.setLayout(layoutFrame);
+       // layoutFrame = new CardLayout();
+        //this.setLayout(layoutFrame);
         
         //Container inicial
         cInicial = new Container();
+        painel = new PainelDoJogo();
         
         //Configura layout do container
         layoutContainer = new SpringLayout();
@@ -131,7 +132,6 @@ public class BatalhaNavalWindow extends JFrame{
         botaoOk.addActionListener(new ButtonHandler());
         
         this.setContentPane(cInicial);
-        
         cInicial.add(lbApelido);
         cInicial.add(lbOpcao);
         cInicial.add(lbIPs);
@@ -151,6 +151,9 @@ public class BatalhaNavalWindow extends JFrame{
         this.setVisible(true);
     }
 
+    /**
+     * Configura o layout do frame
+     */
     private void configuraLayout() {
         
         layoutContainer.putConstraint(SpringLayout.NORTH, lbApelido, 50, SpringLayout.NORTH, cInicial);
@@ -175,6 +178,9 @@ public class BatalhaNavalWindow extends JFrame{
         layoutContainer.putConstraint(SpringLayout.WEST, botaoOk, 5, SpringLayout.WEST, chbNovoIP);
     }
     
+    /**
+     * Inicializa a combo box com os IPs. Este método pode lançar uma excessão se o arquivo não for encontrado.
+     */
     private void inicializaComboBox() throws IOException{
         
         ArrayList<String> ips = new ArrayList<String>();
@@ -201,45 +207,17 @@ public class BatalhaNavalWindow extends JFrame{
          }        
     }
     
-    private class ButtonGroupHandler implements ItemListener{
-        
-        public void itemStateChanged(ItemEvent ae){
-            
-            if(ae.getStateChange() == ItemEvent.SELECTED){
-                
-                if(jrbServidor == (JRadioButton)ae.getSource()){
-                        
-                     isServidor = true;
-                     cbIPs.setEnabled(false);
-                    // cbIPs.setVisible(true);
-                     chbNovoIP.setEnabled(false);
-                }
-                else{
-                    
-                     isServidor = false;
-                     cbIPs.setEnabled(true);
-                     chbNovoIP.setEnabled(true);
-                }
-               
-                System.out.printf("Servidor? %s\n",(isServidor)?"Sim":"Não");
-            }
-        }
-    }
-    
-    private class ComboBoxHandler implements ItemListener{
-        
-        public void itemStateChanged(ItemEvent e) {
-            
-            if(e.getStateChange() == ItemEvent.SELECTED){
-                    
-                    ultimoIP = (String) ((JComboBox)e.getSource()).getSelectedItem();
-                    System.out.printf("Ultimo Ip Selecionado: %s",(ultimoIP == null)?"nenhum":ultimoIP);
-            }
-        }
-    }
-
+    /**
+     * Adiciona um novo ip no arquivo
+     */
     private void adicionarNovoIP(String novoIP) {
         
+        /**
+        * @TODO: não consegui dar append nesta string com o restante do arquivo. Vou dar uma pesquisada aqui. Se alguém conseguir,
+        * coloque como FEITO.
+        *
+        * @author Renato
+        */
         try {
             
             streamSaida = new PrintWriter(new FileWriter(ARQUIVO_IPs));
@@ -258,17 +236,71 @@ public class BatalhaNavalWindow extends JFrame{
     }
     
     /**
-     * MÓDULO DO SERVIDOR, INSTANCIA O SERVER SOCKET
+     * MÓDULO DO SERVIDOR
+     *
+     * ESTE MÉTODO PODE NA VERDADE SER UMA CLASSE, TUDO DEPENDE DE ASPECTO DE PROJETO
      */
     private void carregaModuloServidor() {
 
     }
 
     /**
-     * MÓDULO DO CLIENTE, INSTANCIA O SOCKET
-     */
+     * MÓDULO DO CLIENTE
+     *
+     * ESTE MÉTODO PODE NA VERDADE SER UMA CLASSE, TUDO DEPENDE DE ASPECTO DE PROJETO
+     */    
     private void carregaModuloCliente() {
 
+    }
+    
+    /**
+     * ButtonGroupHandler.java
+     *
+     * Criado em 25 de Agosto de 2007, 22:08
+     *
+     * O propósito desta classe é implementar um listener para os eventos do gerenciador de botões de rádio
+     */
+    private class ButtonGroupHandler implements ItemListener{
+        
+        public void itemStateChanged(ItemEvent ae){
+            
+            if(ae.getStateChange() == ItemEvent.SELECTED){
+                
+                if(jrbServidor == (JRadioButton)ae.getSource()){
+                        
+                     isServidor = true;
+                     cbIPs.setEnabled(false);
+                     chbNovoIP.setEnabled(false);
+                }
+                else{
+                    
+                     isServidor = false;
+                     cbIPs.setEnabled(true);
+                     chbNovoIP.setEnabled(true);
+                }
+               
+                System.out.printf("Servidor? %s\n",(isServidor)?"Sim":"Não");
+            }
+        }
+    }
+    
+    /**
+     * ComboBoxHandler.java
+     *
+     * Criado em 25 de Agosto de 2007, 22:28
+     *
+     * O propósito desta classe é lidar com eventos sobre a combo box
+     */    
+    private class ComboBoxHandler implements ItemListener{
+        
+        public void itemStateChanged(ItemEvent e) {
+            
+            if(e.getStateChange() == ItemEvent.SELECTED){
+                    
+                    ultimoIP = (String) ((JComboBox)e.getSource()).getSelectedItem();
+                    System.out.printf("Ultimo Ip Selecionado: %s",(ultimoIP == null)?"nenhum":ultimoIP);
+            }
+        }
     }
     
     private class CheckBoxHandler implements ItemListener{
@@ -304,8 +336,18 @@ public class BatalhaNavalWindow extends JFrame{
                     System.out.println("Último IP gravado: "+ultimoIP);
             }    
             
-            if(isServidor) carregaModuloServidor();
-            else carregaModuloCliente();
+            /**
+             * AQUI ENTRA A LÓGICA DE SINCRONIZAÇÃO E INSTANCIAÇÃO DE CLIENTE E SERVIDOR.
+             */
+            /*if(isServidor) carregaModuloServidor();
+            else carregaModuloCliente();*/
+            
+            //Apenas teste
+            BatalhaNavalWindow.this.remove(BatalhaNavalWindow.this.getContentPane());
+            BatalhaNavalWindow.this.setContentPane(painel);
+            BatalhaNavalWindow.this.validate();
+            BatalhaNavalWindow.this.pack();
+            SwingUtilities.updateComponentTreeUI(BatalhaNavalWindow.this);
         }
 
     }
