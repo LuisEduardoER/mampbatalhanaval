@@ -60,6 +60,10 @@ public class BatalhaNavalWindow extends JFrame{
     private Container cInicial = null;
     //Botão que inicia tudo hehe ;-)
     private JButton botaoOk = null;
+    //Armazena o apelido do jogador
+    private String apelidoJogador = null;
+    //Armazena o ip do jogador(no caso ser o servidor, este valor será colocado como host)
+    private String ip = null;
     
     public BatalhaNavalWindow() {
         
@@ -174,7 +178,6 @@ public class BatalhaNavalWindow extends JFrame{
     private void inicializaComboBox() throws IOException{
         
         ArrayList<String> ips = new ArrayList<String>();
-        int i = 0;
         
         try {
             
@@ -186,7 +189,6 @@ public class BatalhaNavalWindow extends JFrame{
             cbIPs = new JComboBox(ips.toArray());
             cbIPs.setPreferredSize(new Dimension(200,25));
             cbIPs.setEditable(false);
- //           cbIPs.setEnabled(false);
             cbIPs.addItemListener(new ComboBoxHandler());       
         } 
         catch (Exception e) {
@@ -235,6 +237,25 @@ public class BatalhaNavalWindow extends JFrame{
             }
         }
     }
+
+    private void adicionarNovoIP(String novoIP) {
+        
+        try {
+            
+            streamSaida = new PrintWriter(new FileWriter(ARQUIVO_IPs));
+            CharSequence cs = novoIP.subSequence(0, novoIP.length()-1);
+            streamSaida.append(cs);
+            streamSaida.flush();
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally{
+            
+            if(streamSaida != null)
+                    streamSaida.close();
+         }           
+    }
     
     /**
      * MÓDULO DO SERVIDOR, INSTANCIA O SERVER SOCKET
@@ -271,9 +292,22 @@ public class BatalhaNavalWindow extends JFrame{
         
         public void actionPerformed(ActionEvent ae){
         
+            //copia o apelido do jogador para a variável
+            apelidoJogador = txfApelido.getText();
+            
+            //Verifica se o campo de texto para adicionar novo IP está habilitado (se estiver é porque um novo IP foi adicionado)
+            //e se algum IP foi realmente digitado ali
+            if(txfNovoIP.isEnabled() && txfNovoIP.getText() != null){
+                        
+                    adicionarNovoIP(txfNovoIP.getText()+"\n");
+                    ultimoIP = txfNovoIP.getText(); 
+                    System.out.println("Último IP gravado: "+ultimoIP);
+            }    
+            
             if(isServidor) carregaModuloServidor();
             else carregaModuloCliente();
         }
+
     }
 }
         
