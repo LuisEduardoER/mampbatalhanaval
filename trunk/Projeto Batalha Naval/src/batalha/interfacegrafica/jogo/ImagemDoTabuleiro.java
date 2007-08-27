@@ -19,10 +19,17 @@ import java.awt.Point;
  */
 public class ImagemDoTabuleiro{
 
+    //Imagem armazenada
     private Image imagem = null;
+    //Ponto onde se inicia a imagem
     private Point pontoInicial = null;
 
-
+    /**
+     * Construtor da classe ImagemDoTabuleiro
+     *
+     * @param imagem - imagem a ser armazenada
+     *        pontoInicial - ponto onde se inicia a imagem
+     */
     public ImagemDoTabuleiro(Image imagem, Point pontoInicial){
 
         this.imagem = imagem; 
@@ -30,11 +37,19 @@ public class ImagemDoTabuleiro{
 
     }
     
+    /**
+     * Retorna a imagem contida neste objeto
+     * @return imagem - imagem armazenada no objeto
+     */
     public Image getImagem(){
         
         return this.imagem;
     }
     
+    /**
+     * Retorna o ponto onde se inicia a imagem
+     * @return pontoInicial - ponto onde se inicia a imagem
+     */
     public Point getPontoInicial(){
         
         return this.pontoInicial;
