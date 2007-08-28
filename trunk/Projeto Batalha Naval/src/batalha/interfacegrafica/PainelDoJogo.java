@@ -343,4 +343,10 @@ public class PainelDoJogo extends javax.swing.JPanel {
         }
         return container;
     }
+    
+    public void Jogo(){
+
+        txaChat.append( "\nMerda..." + this.getNick() );                        
+   
+    }
 }
