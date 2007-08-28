@@ -22,7 +22,7 @@ import java.awt.*;
 
 public class BatalhaNavalWindow extends JFrame{
     
-        //Label para o apelido do jogador
+    //Label para o apelido do jogador
     private JLabel lbApelido = null,
             //Label para a decisão entre ser servidor ou cliente
             lbOpcao = null,
@@ -144,6 +144,7 @@ public class BatalhaNavalWindow extends JFrame{
         cInicial.add(chbNovoIP);
         cInicial.add(txfNovoIP);
         cInicial.add(botaoOk);
+
         //Configura o layout do container
         configuraLayout();
         
@@ -353,15 +354,12 @@ public class BatalhaNavalWindow extends JFrame{
             painel.setNick( txfApelido.getText() ); 
             painel.setIp( (String) cbIPs.getSelectedItem() );
             
-            
             BatalhaNavalWindow.this.remove(BatalhaNavalWindow.this.getContentPane());
             BatalhaNavalWindow.this.setContentPane(painel);
+            painel.Jogo();
             BatalhaNavalWindow.this.validate();
             BatalhaNavalWindow.this.pack();
             SwingUtilities.updateComponentTreeUI(BatalhaNavalWindow.this);
         }
-
     }
 }
-        
-
