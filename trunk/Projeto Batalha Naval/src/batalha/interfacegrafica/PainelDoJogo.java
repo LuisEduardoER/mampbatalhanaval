@@ -61,14 +61,46 @@ public class PainelDoJogo extends javax.swing.JPanel {
     private TabuleiroInimigo tabuleiroInimigo;
     //Painel com o logo
     private JPanel jpLogo;
+    //Apelido 
+    private String apelidoJogador;
+    //IP
+    private String Ip;
+    
 
     /** 
      * Construtor da classe PainelDoJogo
      */
     
     public PainelDoJogo() {
+        
         initComponents();
     }
+    
+    
+    /****************************************************************************************/
+    
+    void setNick(String apelido){
+        apelidoJogador = apelido;
+        
+        System.out.print("\nAKi tem o apelido: " + apelidoJogador);
+    }
+    
+    void setIp(String ip ){
+        Ip = ip;
+        System.out.print("\nAKi tem o ip: " + Ip);
+    }
+    
+    String  getNick(){
+      return  apelidoJogador;
+    }
+    
+    String  getIp(){
+       return Ip;
+    }
+    
+    
+    
+    /****************************************************************************************/
     
     /**
      * Inicializa os componentes que serão adicionados a este painel
@@ -201,6 +233,16 @@ public class PainelDoJogo extends javax.swing.JPanel {
         jspChat.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         jspChat.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         txaChat.setEditable(false);
+        
+        /********* ******************************/
+         
+          String msg = getNick(); //pega o Nick
+          
+          System.out.print("AKi: " + msg);
+          
+          txaChat.append( "\nbostaaaaaaaaaaaaa..." + msg );                        
+         
+         /***********************************************************/
         
         //Configuramos o botão para enviar mensagem 
         //@TODO: adicionar listener

@@ -45,7 +45,7 @@ public class BatalhaNavalWindow extends JFrame{
     //Stream para escrever o nome IP no arquivo
     private PrintWriter streamSaida = null;
     //Nome do arquivo com os IPs
-    private static final String ARQUIVO_IPs = "arquivo_ips.txt";
+    private static final String ARQUIVO_IPs = "src/arquivo_ips.txt";
     //Layout do frame
     private CardLayout layoutFrame = null;
     //Layout do container padrão
@@ -69,6 +69,8 @@ public class BatalhaNavalWindow extends JFrame{
         
         configuraFrame();
     }
+    
+    
     
     private void configuraFrame() {
         
@@ -150,7 +152,10 @@ public class BatalhaNavalWindow extends JFrame{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
     }
-
+    
+   
+    
+    
     /**
      * Configura o layout do frame
      */
@@ -325,7 +330,7 @@ public class BatalhaNavalWindow extends JFrame{
         public void actionPerformed(ActionEvent ae){
         
             //copia o apelido do jogador para a variável
-            apelidoJogador = txfApelido.getText();
+       //     apelidoJogador = txfApelido.getText();
             
             //Verifica se o campo de texto para adicionar novo IP está habilitado (se estiver é porque um novo IP foi adicionado)
             //e se algum IP foi realmente digitado ali
@@ -343,6 +348,12 @@ public class BatalhaNavalWindow extends JFrame{
             else carregaModuloCliente();*/
             
             //Apenas teste
+            
+            //funcoes para passar o nick e o Ip para Painel Do Jogo
+            painel.setNick( txfApelido.getText() ); 
+            painel.setIp( (String) cbIPs.getSelectedItem() );
+            
+            
             BatalhaNavalWindow.this.remove(BatalhaNavalWindow.this.getContentPane());
             BatalhaNavalWindow.this.setContentPane(painel);
             BatalhaNavalWindow.this.validate();
