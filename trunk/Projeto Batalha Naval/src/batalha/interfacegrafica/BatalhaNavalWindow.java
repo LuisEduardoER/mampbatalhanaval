@@ -15,6 +15,7 @@ import java.net.*;
 import java.io.*;
 import java.awt.event.*;
 import java.awt.*;
+import batalha.rede.ServidorRede;
 
 /**
  * @author Renato E. Silva
@@ -356,7 +357,8 @@ public class BatalhaNavalWindow extends JFrame{
             
             BatalhaNavalWindow.this.remove(BatalhaNavalWindow.this.getContentPane());
             BatalhaNavalWindow.this.setContentPane(painel);
-            painel.Jogo();
+            ServidorRede server = new ServidorRede(painel);
+            server.Jogar();
             BatalhaNavalWindow.this.validate();
             BatalhaNavalWindow.this.pack();
             SwingUtilities.updateComponentTreeUI(BatalhaNavalWindow.this);
