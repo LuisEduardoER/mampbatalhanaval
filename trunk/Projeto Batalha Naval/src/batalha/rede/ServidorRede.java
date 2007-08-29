@@ -9,6 +9,8 @@
 
 package batalha.rede;
 import batalha.interfacegrafica.PainelDoJogo;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  *
@@ -26,12 +28,17 @@ public class ServidorRede {
     
     public void Jogar(){
     
-        painel.atualizaChat("\nPaulo diz: oi");
-        painel.atualizaChat("\nPaulo diz: td bem?");
-        painel.atualizaChat("\nPaulo diz: gostaria de te conhecer melhor...");
-        painel.atualizaChat("\nPaulo diz: oi");
-        painel.atualizaChat("\nPaulo diz: td bem?");
-        painel.atualizaChat("\nPaulo diz: gostaria de te conhecer melhor...");
+        painel.getTxfMensagem().addActionListener(
+  
+                new ActionListener(){
+                    
+                    public void actionPerformed(ActionEvent ae){
+                        
+                        painel.atualizaChat("\n" + painel.getNick()+ " diz: " + ae.getActionCommand());
+                    }
+                }
+        );
+
         
     }
 }
