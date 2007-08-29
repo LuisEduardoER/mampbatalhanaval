@@ -9,9 +9,10 @@
 package batalha.interfacegrafica;
 
 import batalha.interfacegrafica.jogo.*;
+import batalha.rede.ServidorRede;
 import java.awt.*;
 import javax.swing.*;
-
+import java.awt.event.*;
 /**
  * @author  Renato
  *
@@ -78,27 +79,31 @@ public class PainelDoJogo extends javax.swing.JPanel {
     
     
     /****************************************************************************************/
-    
+    //seta o apelido que o jogador entrar sendo este metodo chamado na classe BatalhaNavalWindow
     void setNick(String apelido){
-        apelidoJogador = apelido;
-        
-        System.out.print("\nAKi tem o apelido: " + apelidoJogador);
+        apelidoJogador = apelido;        
     }
     
+    //seta o Ip que o jogador entrar sendo este metodo chamado na classe BatalhaNavalWindow
     void setIp(String ip ){
         Ip = ip;
-        System.out.print("\nAKi tem o ip: " + Ip);
     }
     
-    String  getNick(){
+    //retorna o apelido 
+    public String  getNick(){
       return  apelidoJogador;
     }
     
+    //retorna o Ip
     String  getIp(){
        return Ip;
     }
     
+    //retorna o campo de texto da mensagem do chat
+    public JTextField getTxfMensagem() {
     
+        return this.txfMensagem;
+    }
     
     /****************************************************************************************/
     
@@ -114,8 +119,12 @@ public class PainelDoJogo extends javax.swing.JPanel {
         
         //Instancia os objetos
         tabuleiroInimigo = new TabuleiroInimigo();
-        jspChat = new javax.swing.JScrollPane();
+        //jspChat = new javax.swing.JScrollPane();
         txaChat = new javax.swing.JTextArea();
+        
+       // jspChat.add(txaChat);
+      //  JScrollPane scrollPane = new JScrollPane(txaChat); 
+        
         jpLogo = new javax.swing.JPanel();
         btPoderEspecial = new javax.swing.JButton();
         btEnviarMensagem = new javax.swing.JButton();
@@ -226,24 +235,20 @@ public class PainelDoJogo extends javax.swing.JPanel {
         Box box3BaixoX2 = Box.createHorizontalBox();
 
         //Configuramos a área de visão, dimensão e tamanho (em termos de coluna de texto) da área de texto.
-        jspChat.setViewportView(txaChat);
-        txaChat.setPreferredSize(new Dimension(200,100));
+       // jspChat.setViewportView(txaChat);
+        jspChat = new JScrollPane(txaChat);               
+           
+        //txaChat.setPreferredSize(new Dimension(200,100));
         txaChat.setColumns(30);
+        txaChat.setLineWrap(true);
+        jspChat.setPreferredSize(new Dimension(350,100));
         //Configuramos a política da área de texto, caso seja necessário habilitar scroll vertical e/ou horizontal
-        jspChat.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        jspChat.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        txaChat.setEditable(false);
+        jspChat.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        jspChat.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        txaChat.setEditable(true);
         
-        /********* ******************************/
-         
-          String msg = getNick(); //pega o Nick
-          
-          System.out.print("AKi: " + msg);
-          
-          txaChat.append( "\nbostaaaaaaaaaaaaa..." + msg );                        
-         
-         /***********************************************************/
         
+             
         //Configuramos o botão para enviar mensagem 
         //@TODO: adicionar listener
         btEnviarMensagem.setPreferredSize(new Dimension(80,30));
@@ -344,9 +349,12 @@ public class PainelDoJogo extends javax.swing.JPanel {
         return container;
     }
     
-    public void atualizaChat(String texto) {
-    
-        txaChat.append(texto);
+    //coloca a menssagem do chat na tela do jogador 
+    public void atualizaChat(final String texto) {
+        
+                                
+                           txaChat.append(texto);
+                           
     }
    
 }

@@ -357,8 +357,10 @@ public class BatalhaNavalWindow extends JFrame{
             
             BatalhaNavalWindow.this.remove(BatalhaNavalWindow.this.getContentPane());
             BatalhaNavalWindow.this.setContentPane(painel);
-            ServidorRede server = new ServidorRede(painel);
-            server.Jogar();
+            
+            ServidorRede server = new ServidorRede(painel); //instancia um objeto da classe ServidorRede
+            server.Jogar(); //metodo da classe Servidor Rede
+            
             BatalhaNavalWindow.this.validate();
             BatalhaNavalWindow.this.pack();
             SwingUtilities.updateComponentTreeUI(BatalhaNavalWindow.this);
