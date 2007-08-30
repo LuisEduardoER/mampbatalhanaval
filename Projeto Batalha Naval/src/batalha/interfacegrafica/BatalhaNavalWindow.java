@@ -15,7 +15,6 @@ import java.net.*;
 import java.io.*;
 import java.awt.event.*;
 import java.awt.*;
-import batalha.rede.ServidorRede;
 
 /**
  * @author Renato E. Silva
@@ -65,13 +64,15 @@ public class BatalhaNavalWindow extends JFrame{
     private String apelidoJogador = null;
     //Painel do Jogo
     private PainelDoJogo painel = null;
+    //Conexao e Logica do Jogo 
+    
+    private Thread jogo;
+
     
     public BatalhaNavalWindow() {
         
         configuraFrame();
     }
-    
-    
     
     private void configuraFrame() {
         
@@ -154,8 +155,6 @@ public class BatalhaNavalWindow extends JFrame{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
     }
-    
-   
     
     
     /**
@@ -331,6 +330,7 @@ public class BatalhaNavalWindow extends JFrame{
         
         public void actionPerformed(ActionEvent ae){
         
+            BatalhaNavalWindow.this.remove(BatalhaNavalWindow.this.getContentPane());
             //copia o apelido do jogador para a variável
        //     apelidoJogador = txfApelido.getText();
             
@@ -340,30 +340,21 @@ public class BatalhaNavalWindow extends JFrame{
                         
                     adicionarNovoIP(txfNovoIP.getText()+"\n");
                     ultimoIP = txfNovoIP.getText(); 
-                    System.out.println("Último IP gravado: "+ultimoIP);
             }    
-            
-            /**
-             * AQUI ENTRA A LÓGICA DE SINCRONIZAÇÃO E INSTANCIAÇÃO DE CLIENTE E SERVIDOR.
-             */
-            /*if(isServidor) carregaModuloServidor();
-            else carregaModuloCliente();*/
-            
-            //Apenas teste
             
             //funcoes para passar o nick e o Ip para Painel Do Jogo
             painel.setNick( txfApelido.getText() ); 
             painel.setIp( (String) cbIPs.getSelectedItem() );
-            
-            BatalhaNavalWindow.this.remove(BatalhaNavalWindow.this.getContentPane());
+            painel.setServidor(isServidor);
+            painel.setVisible(true);
+
+            jogo = new ServidorRede(painel);
             BatalhaNavalWindow.this.setContentPane(painel);
-            
-            ServidorRede server = new ServidorRede(painel); //instancia um objeto da classe ServidorRede
-            server.Jogar(); //metodo da classe Servidor Rede
-            
             BatalhaNavalWindow.this.validate();
             BatalhaNavalWindow.this.pack();
             SwingUtilities.updateComponentTreeUI(BatalhaNavalWindow.this);
+            jogo.start();
         }
     }
+        
 }
