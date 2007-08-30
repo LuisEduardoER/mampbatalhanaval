@@ -66,8 +66,9 @@ public class PainelDoJogo extends javax.swing.JPanel {
     private String apelidoJogador;
     //IP
     private String Ip;
+    //boolean que indica se o objeto eh o servidor (true) ou cliente (false)
+    private boolean Servidor;
     
-
     /** 
      * Construtor da classe PainelDoJogo
      */
@@ -95,7 +96,7 @@ public class PainelDoJogo extends javax.swing.JPanel {
     }
     
     //retorna o Ip
-    String  getIp(){
+    public String getIp(){
        return Ip;
     }
     
@@ -104,6 +105,19 @@ public class PainelDoJogo extends javax.swing.JPanel {
     
         return this.txfMensagem;
     }
+    
+    //seta o boolean que indica se o objeto eh servidor ou cliente
+    public void setServidor(boolean ser) {
+        
+        this.Servidor = ser;
+    }
+
+    //retorna o boolean que indica se o objeto eh servidor ou nao
+    public boolean getServidor() {
+    
+        return this.Servidor;
+    }
+    
     
     /****************************************************************************************/
     
@@ -247,13 +261,21 @@ public class PainelDoJogo extends javax.swing.JPanel {
         jspChat.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         txaChat.setEditable(true);
         
-        
-             
         //Configuramos o botão para enviar mensagem 
         //@TODO: adicionar listener
         btEnviarMensagem.setPreferredSize(new Dimension(80,30));
-        btEnviarMensagem.setText("Enviar");
+        btEnviarMensagem.setText("Criar");
         
+ /*       btEnviarMensagem.addActionListener(
+            new ActionListener(){
+                public void actionPerformed(ActionEvent ae){
+     
+  
+                }
+            }
+    );
+
+   */     
         //Instância do gerenciador de layout SpringLayout. Este gerenciador é muito prático e poderoso, e funciona de maneira bem simples
         //Tudo que devemos fazer é especificar o posicionamento de um container em relação a outro, de acordo com uma coordenada. Explica
         //rei no decorrer do código
@@ -353,8 +375,10 @@ public class PainelDoJogo extends javax.swing.JPanel {
     public void atualizaChat(final String texto) {
         
                                 
-                           txaChat.append(texto);
-                           
+             txaChat.append(texto);
+             txaChat.setCaretPosition(txaChat.getText().length());
+             txfMensagem.setText("");
     }
+    
    
 }
