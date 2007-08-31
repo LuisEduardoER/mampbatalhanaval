@@ -183,6 +183,15 @@ public class AreaCentral extends JPanel{
         this.add(dadosRede,REDE_PANE);
     }
    
+/* 
+ * Retorna o botão que é clicado quando o jogador termina de montar o seu tabuleiro.
+ * É utilizado para saber o momento de enviar a matriz do tabuleiro do jogador para o adversário.
+ */
+    public JButton getBotaoValidaPosicionamento() {
+    
+        return this.botaoValidaPosicionamento;
+    }
+    
     /**
      * Desabilita o último navio selecionado, caso sua configuração ocorreu com sucesso.
      * Serviço oferecido para a classe TabuleiroJogo (@see TabuleiroJogo.java).
@@ -267,7 +276,6 @@ public class AreaCentral extends JPanel{
                 larguraUltimoNavio = 125;
                 posicaoUltimoNavio = 4;
             }
-            
         }
    }
 }

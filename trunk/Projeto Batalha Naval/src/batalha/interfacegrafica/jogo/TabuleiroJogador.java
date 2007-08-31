@@ -10,6 +10,7 @@
 package batalha.interfacegrafica.jogo;
 
 import batalha.interfacegrafica.PainelDoJogo;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +30,10 @@ import java.awt.event.*;
  */
 
 public class TabuleiroJogador extends JPanel{
-    
+
+    //ArrayList que armazena todas as imagens geradas. Todo clique neste tabuleiro irá gerar uma imagem que será adicionado
+    //neste ArrayList
+    private ArrayList<ImagemDoTabuleiro> imagens = null;
     //Referência à àrea de configuração dos navios
     private AreaCentral areaCentral = null;
     //Instância de um objeto manipulador de eventos do mouse
@@ -54,7 +58,10 @@ public class TabuleiroJogador extends JPanel{
     private int contadorPosicionamentoOk = 0;
     private Point posicaoCursor = null;
 
-    
+    private static final int HIT_AGUA = 0,
+                             HIT_NAVIO = 1,
+                             HIT_PREV_HIT = 2;
+  
     /**
      * 
      * Construtor da classe TabuleiroJogador
@@ -73,7 +80,10 @@ public class TabuleiroJogador extends JPanel{
         this.setPreferredSize(new java.awt.Dimension(250,250));
         
         this.areaCentral = areaDeConfiguracaoDeNavio;
-        
+
+        //Inicializa o arrayList para armazenar as imagens
+        this.imagens = new ArrayList<ImagemDoTabuleiro>();
+
         this.setBorder( BorderFactory.createLineBorder( new Color(0,100,90) ) );
         this.imagensDoTabuleiro = new ImagemDoTabuleiro[5];
         
@@ -89,6 +99,14 @@ public class TabuleiroJogador extends JPanel{
         addMouseListener(this.mouseHandler);
         addMouseMotionListener(this.mouseMotionHandler);
         this.posicaoCursor = new Point();
+    }
+
+    /**
+     * Retorna a matriz do jogador, para ser enviada ao adversário
+     */
+    public String[][] getMatrizJogador() {
+    
+        return this.matrizLogicaDoTabuleiro;
     }
 
     /**
@@ -133,11 +151,17 @@ public class TabuleiroJogador extends JPanel{
               g2.drawImage(imagensDoTabuleiro[i].getImagem(), imagensDoTabuleiro[i].getPontoInicial().x, imagensDoTabuleiro[i].getPontoInicial().y,this);  
            }
        }
+        
+        //Percorre o array desenhando as imagens armazenadas no ArrayList
+        for(ImagemDoTabuleiro i: imagens)
+            g.drawImage(i.getImagem(),i.getPontoInicial().x,i.getPontoInicial().y,this);
        
        if(areaCentral.imagemUltimoNavio == null ) return; 
        Point p = normalizaPonto(posicaoCursor.x, posicaoCursor.y);
+
        //System.out.println("Ponto p: "+p.getX()+","+p.getY());
        //System.out.println("Ponto p: "+p.x+","+p.y);
+
        if (areaCentral.verticalShip) g2.fill3DRect(p.x,
                  p.y, 25, areaCentral.larguraUltimoNavio, false);
        else g2.fill3DRect(p.x,
@@ -232,7 +256,7 @@ public class TabuleiroJogador extends JPanel{
                    matrizLogicaDoTabuleiro[xInicialMatriz][i] = nomeDoNavio; 
             }
             
-            imprimeTabuleiro();
+        //    imprimeTabuleiro();
             return true;
         }
         
@@ -252,7 +276,7 @@ public class TabuleiroJogador extends JPanel{
             matrizLogicaDoTabuleiro[i][yInicialMatriz] = nomeDoNavio;
         }
        // System.out.println("\n\n");
-        imprimeTabuleiro();
+    //    imprimeTabuleiro();
         return true;
     }
 
@@ -268,8 +292,6 @@ public class TabuleiroJogador extends JPanel{
         
         System.out.println("\n\n");
     }
-    
-
     
     /**
      * MouseHandler.java
@@ -343,6 +365,49 @@ public class TabuleiroJogador extends JPanel{
             posicaoCursor.setLocation(me.getPoint());
             repaint();
         }
+    }
+ 
+    //teste
+    public void configuraHit(int x, int y) {
+        
+        int checkPosicao = getHit(x,y);
+        Point p = normalizaPonto(x,y);
+        x = x/25;
+        y = y/25;
+        int posicao = (x * 10) + y;
+        
+        System.out.println("\nPosicao da matriz de imagens:" + posicao);
+        if(checkPosicao == HIT_AGUA){
+            
+            matrizLogicaDoTabuleiro[x][y] = "Y";
+            
+            this.imagens.add(new ImagemDoTabuleiro(new ImageIcon("splash.gif").getImage(), p));
+            repaint();
+            
+            
+        //Acertou navio! Viva!    
+        } else if(checkPosicao == HIT_NAVIO){
+            
+            matrizLogicaDoTabuleiro[x][y] = "X";
+            
+            this.imagens.add(new ImagemDoTabuleiro(new ImageIcon("explodido.gif").getImage(), p));
+            
+            repaint();
+        }
+    }
+
+    //Verifica o que o jogador acertou
+    private int getHit(int x, int y){
+        
+        int xHit = x/25;
+        int yHit = y/25;
+        
+        if(matrizLogicaDoTabuleiro[xHit][yHit].equalsIgnoreCase("agua")) return HIT_AGUA;
+        //Acertou alguma coisa que não era navio (por exemplo, alguma outra parte já acertada)
+        else if(matrizLogicaDoTabuleiro[xHit][yHit].equalsIgnoreCase("X") || matrizLogicaDoTabuleiro[xHit][yHit].equalsIgnoreCase("Y"))
+                return HIT_PREV_HIT;
+        
+        return HIT_NAVIO;
     }
     
 }//fim da classe TabuleiroJogador
