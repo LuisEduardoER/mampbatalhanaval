@@ -15,6 +15,7 @@ import java.io.*;
 import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.SwingUtilities;
 /**
  *
  * @author Administrador
@@ -31,37 +32,89 @@ public class ServidorRede extends Thread {
     public ServidorRede(PainelDoJogo p) {
 
         this.painel = p;
-
     }
            
  public void run(){
 
-         painel.getTxfMensagem().addActionListener(
+    //escuta o enter no campo de texto do chat e envia a mensagem
+     painel.getTxfMensagem().addActionListener(
             new ActionListener(){
                 public void actionPerformed(ActionEvent ae){
-                    EnviaDado( ae.getActionCommand() );
+                    EnviaDado( ae.getActionCommand(), "Chat" );
+                    painel.limpaTexto();
                 }
             }
     );
+    
+    //escuta o botão enviar do chat e envia a mensagem
+    painel.getBtEnviarMensagem().addActionListener(
+            new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    EnviaDado(painel.getTextoMensagem(), "Chat");
+                    painel.limpaTexto();
+                }
+        }
+    );
 
+    //escuta o click no tabuleiro inimigo
+    painel.getTabuleiroInimigo().addMouseListener(
+            new MouseAdapter()  {
+            public void mousePressed(MouseEvent me) {
+                    String msg = new String();
+                    msg = msg + "!";
+                    msg = msg + me.getX();
+                    msg = msg + ",";
+                    msg = msg + me.getY();
+                    msg = msg + ",";
+                    EnviaDado(msg, "Jogada");
+                }
+        }
+    );    
+
+    //escuta o botão ok e envia a matriz do jogador para o adversário
+    painel.getBotaoValidaPosicionamento().addActionListener(
+            new ActionListener(){
+                public void actionPerformed(ActionEvent ae){
+                    String matriz[][] = painel.getMatrizDoJogador();
+                    String msg ="";
+                    msg = msg + "#";
+                    
+                    //transforma a matriz em um String
+                    for(int i = 0;i<10;i++) {
+                        for(int j=0;j<10;j++) {
+                            msg = msg + matriz[i][j];
+                            msg = msg + ",";
+                        }
+                    }
+                    EnviaDado( msg, "Matriz" );
+                }
+            }
+    );
+    
+    //se o jogador criou o servidor, chama a função que instancia o ServerSocket
      if(this.painel.getServidor()) {
             RodaServidor();
         }
+    
+    //senão, estabelece uma conexão como cliente
         else {
             RodaCliente();
         }
  }
  
- private void EnviaDado( String msg ){ // funcao que envia a msg...
+ private void EnviaDado( String msg, String origem ){ // funcao que envia a msg...
      try{
-                 
-         painel.atualizaChat(painel.getNick()+ " diz: " + msg + "\n" ); //escreve na propria tela
-         saida.writeObject( painel.getNick() + " diz: " + msg);//escreve no buffer..
+         if(origem.equals("Chat")) {
+             painel.atualizaChat(painel.getNick()+ " diz: " + msg + "\n" ); //escreve na propria tela
+             saida.writeObject("@" + painel.getNick() + " diz: " + msg);//escreve no buffer..
+         }
+         else if((origem.equals("Matriz")) || (origem.equals("Jogada"))) {
+             saida.writeObject(msg);
+         }
          saida.flush(); //limpar o buffer
          
       }catch( IOException io){//caso de erro...
-         painel.atualizaChat("\nErro na escrita do objeto.");
-         painel.atualizaChat("\nConexao de rede perdida.");
+         painel.atualizaChat("\nConexao perdida.");
          painel.atualizaChat("\n\nDESDE JA OBRIGADO! EQUIPE MAMP&R ");
      }
  }
@@ -70,7 +123,7 @@ public class ServidorRede extends Thread {
    {
        
     try{
-        //cria um serverSocket na porta 5000 e o tamanho da fila 100, ou seja, maximo de clientes que podem se conectar no sevidor 
+        //cria um serverSocket na porta 5000 e o tamanho da fila 1, ou seja, maximo de clientes que podem se conectar no sevidor 
         servidor = new ServerSocket( 5000, 1); //
         
         while( true ){
@@ -135,13 +188,9 @@ public class ServidorRede extends Thread {
     // displayArea.setEditable( false );//para naum apagar o que foi escrito
      
      String msg = "CONEXÃO COMPLETADA\n";
-     
      painel.atualizaChat("__________Bem vindo ao MAMP Messenger__________\n" );
-     
      String msg_fecha = "";
-     
      saida.writeObject( msg ); //escreve no display do cliente quando feita a conexao..
-     
      saida.flush(); //limpa o buffer de saida...
      
      //enterField.setEnabled( true );//e habilita pra digitar e enviar msgs...
@@ -149,12 +198,47 @@ public class ServidorRede extends Thread {
      do{
          try{
              msg = ( String ) entrada.readObject();
-             
-             painel.atualizaChat(msg + "\n");
-             
-             //displayArea.setCaretPosition( displayArea.getText().length() );
-             
-            // displayArea.setEditable( false );//para naum apagar o que foi escrito
+             String pacote = msg.substring(0,1);
+             if(pacote.equals("@")) {
+                painel.atualizaChat(msg.substring(1) + "\n");
+             } 
+             else if(pacote.equals("#")){
+                 String[][] matriz = new String[10][10];
+                 String aux = "";
+                 char caracter;
+                 int posicao = 1;
+                 for(int i =0; i<10;i++) {
+                     for(int j =0; j<10;j++) {
+                         do{
+                             caracter = msg.charAt(posicao++);
+                             aux = aux += caracter;
+                         }while(caracter != ',');
+                         matriz[i][j] = aux.substring(0,aux.length()-1);
+                         aux = "";
+                     }
+                 }
+                 painel.setMatrizInimigo(matriz);
+             }
+             else if(pacote.equals("!")){
+                 //desenhar a imagem jogada no tabuleiro do jogador
+                 String aux = "";
+                 char caracter;
+                 int posicao = 1;
+                 //recebe a coordenada x
+                 do {
+                     caracter = msg.charAt(posicao++);
+                     aux = aux += caracter;
+                 } while(caracter != ',');
+                 int x = Integer.parseInt(aux.substring(0,aux.length()-1));
+                 //recebe a coordenada y
+                 aux = "";
+                 do {
+                     caracter = msg.charAt(posicao++);
+                     aux = aux += caracter;
+                 } while(caracter != ',');
+                 int y = Integer.parseInt(aux.substring(0,aux.length()-1));
+                 painel.configuraHit(x,y);
+             }
              
          }catch( ClassNotFoundException ce){
             painel.atualizaChat( "Tipo de objeto desconhecido \n" );
@@ -164,8 +248,18 @@ public class ServidorRede extends Thread {
 }
 
  private void FechaConexao() throws IOException{
-     painel.atualizaChat("Usuario terminou a conexao \n" );
- //    enterField.setEnabled( false ); //desabilita o envio de msgs
+     
+        SwingUtilities.invokeLater(
+         new Runnable()
+         {        
+            public void run()
+            {
+              
+               painel.atualizaChat("Usuario terminou a conexao \n" );
+            } 
+         } 
+      );
+     
      saida.close(); //fecha a saida...
      entrada.close(); //entrada..
      conexao.close(); //e a conexao...

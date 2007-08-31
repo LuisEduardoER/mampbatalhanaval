@@ -118,6 +118,17 @@ public class PainelDoJogo extends javax.swing.JPanel {
         return this.Servidor;
     }
     
+    //retorna o botão enviar mensagem
+    public JButton getBtEnviarMensagem() {
+    
+        return this.btEnviarMensagem;
+    }
+    
+    //retorna o texto de txfMensagem na forma de String
+    public String getTextoMensagem() {
+    
+        return this.txfMensagem.getText();
+    }
     
     /****************************************************************************************/
     
@@ -135,9 +146,6 @@ public class PainelDoJogo extends javax.swing.JPanel {
         tabuleiroInimigo = new TabuleiroInimigo();
         //jspChat = new javax.swing.JScrollPane();
         txaChat = new javax.swing.JTextArea();
-        
-       // jspChat.add(txaChat);
-      //  JScrollPane scrollPane = new JScrollPane(txaChat); 
         
         jpLogo = new javax.swing.JPanel();
         btPoderEspecial = new javax.swing.JButton();
@@ -157,7 +165,7 @@ public class PainelDoJogo extends javax.swing.JPanel {
         Box box1CimaX = Box.createHorizontalBox(); Box box2CimaX = Box.createHorizontalBox();
         Box box1CimaY = Box.createVerticalBox(); Box box2CimaY = Box.createVerticalBox();
         
-        //Criamos uma box para adicionar o painel do logo. Está apenas em amarelo agora
+        //Criamos uma box para adicionar o painel do jogo. Está apenas em amarelo agora
         Box boxLogo = Box.createVerticalBox();
         jpLogo.setPreferredSize(new Dimension(80,230));
         jpLogo.setBackground(Color.YELLOW);
@@ -264,18 +272,8 @@ public class PainelDoJogo extends javax.swing.JPanel {
         //Configuramos o botão para enviar mensagem 
         //@TODO: adicionar listener
         btEnviarMensagem.setPreferredSize(new Dimension(80,30));
-        btEnviarMensagem.setText("Criar");
+        btEnviarMensagem.setText("Enviar");
         
- /*       btEnviarMensagem.addActionListener(
-            new ActionListener(){
-                public void actionPerformed(ActionEvent ae){
-     
-  
-                }
-            }
-    );
-
-   */     
         //Instância do gerenciador de layout SpringLayout. Este gerenciador é muito prático e poderoso, e funciona de maneira bem simples
         //Tudo que devemos fazer é especificar o posicionamento de um container em relação a outro, de acordo com uma coordenada. Explica
         //rei no decorrer do código
@@ -334,7 +332,6 @@ public class PainelDoJogo extends javax.swing.JPanel {
     private Container criarVetorLetras() {
         
         Container container = new Container();
-        
         container.setPreferredSize(new Dimension(10,250));     
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
@@ -374,11 +371,41 @@ public class PainelDoJogo extends javax.swing.JPanel {
     //coloca a menssagem do chat na tela do jogador 
     public void atualizaChat(final String texto) {
         
-                                
+             txaChat.setEditable(true);
              txaChat.append(texto);
              txaChat.setCaretPosition(txaChat.getText().length());
-             txfMensagem.setText("");
+             txaChat.setEditable(false);
     }
     
-   
+    public String[][] getMatrizDoJogador() {
+    
+        return this.meuTabuleiro.getMatrizJogador();
+    }
+    
+    public void setMatrizInimigo(String[][] matrizLogicaDoTabuleiro) {
+        
+        this.tabuleiroInimigo.setMatrizLogica(matrizLogicaDoTabuleiro);
+    }
+    
+    public JButton getBotaoValidaPosicionamento() {
+    
+        return this.areaCentral.getBotaoValidaPosicionamento();
+    }
+    
+   //limpa o conteúdo do campo texto do chat
+    public void limpaTexto() {
+    
+        this.txfMensagem.setText("");
+    }
+    
+    //retorna o tabuleiro inimigo
+    public TabuleiroInimigo getTabuleiroInimigo() {
+    
+        return this.tabuleiroInimigo.getTabuleiroInimigo();
+    }
+    
+    //envia as coordenadas da jogada do adversário para serem pintadas no tabuleiro do jogador
+    public void configuraHit(int x, int y) {
+        this.meuTabuleiro.configuraHit(x,y);
+    }
 }

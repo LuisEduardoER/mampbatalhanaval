@@ -81,23 +81,8 @@ public class TabuleiroInimigo extends JPanel {
      */
     public void setMatrizLogica(String[][] matrizLogicaDoTabuleiro){
         
-        //this.matrizLogicaDoTabuleiro = matrizLogicaDoTabuleiro;
+        this.matrizLogicaDoTabuleiro = matrizLogicaDoTabuleiro;
         
-        /**
-         * APENAS PARA TESTE!!!
-         */
-        String teste[][] = new String[10][10];
-        Random gerador = new Random();
-        for(int i = 0; i < 10; i++){
-            for(int j = 0; j < 10; j++){
-                int k  = 1+gerador.nextInt(3);
-                if(k == 1) teste[i][j] = "agua";
-                else if(k == 2) teste[i][j] = "navio"; //apenas para testar
-                else teste[i][j] = "X"; //já clicou lá
-            }
-        }
-        
-        this.matrizLogicaDoTabuleiro = teste;
     }
     
     /**
@@ -214,13 +199,12 @@ public class TabuleiroInimigo extends JPanel {
      * O propósito desta classe é lidar com eventos de mouse sobre o tabuleiro, de forma a saber em qual posição 
      * será inserida a imagem
      */
-    private class MouseHandler extends MouseAdapter{
+    public class MouseHandler extends MouseAdapter{
         
         public void mousePressed(MouseEvent me){
             
             configuraHit(me.getX(),me.getY());
         }
-        
         
     }
     
@@ -240,4 +224,10 @@ public class TabuleiroInimigo extends JPanel {
                 repaint();
         }
     }
+    
+    public TabuleiroInimigo getTabuleiroInimigo() {
+        
+        return this;
+    }
+
 }

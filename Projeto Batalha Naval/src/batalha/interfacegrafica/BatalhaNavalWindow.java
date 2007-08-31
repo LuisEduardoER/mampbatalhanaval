@@ -285,7 +285,6 @@ public class BatalhaNavalWindow extends JFrame{
                      chbNovoIP.setEnabled(true);
                 }
                
-                System.out.printf("Servidor? %s\n",(isServidor)?"Sim":"Não");
             }
         }
     }
