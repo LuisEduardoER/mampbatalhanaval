@@ -61,7 +61,7 @@ public class TabuleiroJogador extends JPanel{
     private static final int HIT_AGUA = 0,
                              HIT_NAVIO = 1,
                              HIT_PREV_HIT = 2;
-  
+
     /**
      * 
      * Construtor da classe TabuleiroJogador
