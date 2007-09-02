@@ -72,6 +72,8 @@ public class ServidorRede extends Thread {
                     msg = msg + me.getY();
                     msg = msg + ",";
                     EnviaDado(msg, "Jogada");
+                    //invoca metodo para mostrar os dados das coordenadas clicadas que estara passando pela rede  
+                    painel.getAreaCentral().getDadosDaRede().addDadoEnviado( msg );
                 }
             }
         }
@@ -203,8 +205,7 @@ public class ServidorRede extends Thread {
 
     //processa a conexao com o cliente...
     private void ProcessaConexao() throws IOException{
-     
-     DadosRede pegaDados = new DadosRede();
+          
      
      String msg = "CONEXÃO COMPLETADA\n";
      painel.atualizaChat("___________Bem vindo ao MAMP Messenger___________\n" );
@@ -212,8 +213,8 @@ public class ServidorRede extends Thread {
      saida.writeObject( msg ); //escreve no display do cliente quando feita a conexao..
      
      //invoca metodo para mostrar os dados que estara passando pela rede  
-     painel.getAreaCentral().getDadosDaRede().addDadoRecebido( msg )     ;
-     
+     painel.getAreaCentral().getDadosDaRede().addDadoEnviado( msg + "\n");
+              
      saida.flush(); //limpa o buffer de saida...
      
      do{
@@ -221,14 +222,12 @@ public class ServidorRede extends Thread {
              msg = ( String ) entrada.readObject();
              
              //invoca metodo para mostrar os dados que estara passando pela rede  
-             painel.getAreaCentral().getDadosDaRede().addDadoRecebido( msg )     ;
+             painel.getAreaCentral().getDadosDaRede().addDadoRecebido( msg + "\n")     ;
              
              String pacote = msg.substring(0,1);
              if(pacote.equals("@")) {
                 painel.atualizaChat(msg.substring(1) + "\n");
-                
-                 //invoca metodo para mostrar os dados do chat passando pela rede  
-                painel.getAreaCentral().getDadosDaRede().addDadoRecebido( "\n CHAT: " + msg ) ;
+                                 
              } 
              else if(pacote.equals("#")){
                  //entrar nesse if significa que o adversário configurou seu tabuleiro
@@ -246,13 +245,13 @@ public class ServidorRede extends Thread {
                          aux = "";
                      }
                  }
-                 painel.setMatrizInimigo(matriz);
+                 painel.setMatrizInimigo(matriz);                 
+                
                  if(painel.getJogadorPronto()){
                     JOptionPane.showMessageDialog(null,"VOCÊ COMEÇA JOGANDO", "AVISO", JOptionPane.WARNING_MESSAGE);
                     painel.setVez(true);
                  }
-                 //invoca metodo para mostrar os dados da matriz passando pela rede  
-                painel.getAreaCentral().getDadosDaRede().addDadoRecebido( "\n MATRIZ: " + matriz ) ;
+                 
              }
              else if(pacote.equals("!")){
                  //desenhar a imagem jogada no tabuleiro do jogador

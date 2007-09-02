@@ -45,7 +45,7 @@ public class BatalhaNavalWindow extends JFrame{
     //Stream para escrever o nome IP no arquivo
     private PrintWriter streamSaida = null;
     //Nome do arquivo com os IPs
-    private static final String ARQUIVO_IPs = "src/arquivo_ips.txt";
+    private static final String ARQUIVO_IPs = "src/batalha/arquivo_ips.txt";
     //Layout do frame
     private CardLayout layoutFrame = null;
     //Layout do container padrão
