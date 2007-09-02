@@ -68,6 +68,13 @@ public class PainelDoJogo extends javax.swing.JPanel {
     private String Ip;
     //boolean que indica se o objeto eh o servidor (true) ou cliente (false)
     private boolean Servidor;
+    //boolean que indica que existe uma conexão estabelecida (true) ou não (false)
+    private boolean conectado = false;
+    //boolean que indica que o jogador montou seu tabuleiro e serve para definir quem
+    //começa o jogo, pois aquele que montar o tabuleiro primeiro tem o direito de começar
+    private boolean jogadorPronto;
+    //boolean que indica a vez: true = vez do jogador e false = vez do adversário
+    private boolean vez;
     
     /** 
      * Construtor da classe PainelDoJogo
@@ -78,9 +85,8 @@ public class PainelDoJogo extends javax.swing.JPanel {
         initComponents();
     }
     
-    
     /****************************************************************************************/
-    //seta o apelido que o jogador entrar sendo este metodo chamado na classe BatalhaNavalWindow
+    //seta o apelido que o jogador entrar, este metodo é chamado na classe BatalhaNavalWindow
     void setNick(String apelido){
         apelidoJogador = apelido;        
     }
@@ -130,6 +136,49 @@ public class PainelDoJogo extends javax.swing.JPanel {
         return this.txfMensagem.getText();
     }
     
+    //retorna a área central
+    public AreaCentral getAreaCentral(){
+
+       return this.areaCentral;
+    }
+
+    //retorna o boolean que indica se existe conexão estabelecida
+    public boolean getConectado() {
+        
+        return this.conectado;
+    }
+    
+    //seta o boolean que indica se existe conexao estabelecida
+    public void setConectado(boolean con) {
+        
+        this.conectado = con;
+        this.areaCentral.setConectado(con);
+    }
+    
+    //seta o boolean responsável por indicar que o jogador preparou seu tabuleiro
+    public void setJogadorPronto(boolean jog) {
+        
+        this.jogadorPronto = jog;
+    }
+    
+    //retorna o boolean que indica que o tabuleiro está pronto para o jogo
+    public boolean getJogadorPronto() {
+        
+        return this.jogadorPronto;
+    }
+    
+    //seta a vez
+    public void setVez(boolean v) {
+        
+        this.vez = v;
+        this.tabuleiroInimigo.setVez(v);
+    }
+    
+    //retorna o boolean que indica de quem é a vez
+    public boolean getVez() {
+    
+        return this.vez;
+    }
     /****************************************************************************************/
     
     /**
@@ -147,12 +196,21 @@ public class PainelDoJogo extends javax.swing.JPanel {
         //jspChat = new javax.swing.JScrollPane();
         txaChat = new javax.swing.JTextArea();
         
-        jpLogo = new javax.swing.JPanel();
+         jpLogo = new javax.swing.JPanel();
         btPoderEspecial = new javax.swing.JButton();
         btEnviarMensagem = new javax.swing.JButton();
         areaCentral = new AreaCentral(tabuleiroInimigo);
         meuTabuleiro = new TabuleiroJogador(areaCentral);
         txfMensagem = new JTextField(30);
+        
+        //inicialmente não existe conexão estabelecida
+        this.conectado = false;
+
+        //inicialmente o adversário está montando seu tabuleiro
+        this.jogadorPronto = false;
+        
+        //a vez deve ser false até o jogo começar
+        this.vez = false;
         
         //Cria uma box, que é um gerenciador de containeres. Neste caso criamos uma box horizontal, e todo container adicionado à box
         //o será da esquerda para a direita. Para quem quiser saber mais sobre Box (BoxLayout), indiquei o link do tutorial da Sun
@@ -257,10 +315,8 @@ public class PainelDoJogo extends javax.swing.JPanel {
         Box box3BaixoX2 = Box.createHorizontalBox();
 
         //Configuramos a área de visão, dimensão e tamanho (em termos de coluna de texto) da área de texto.
-       // jspChat.setViewportView(txaChat);
-        jspChat = new JScrollPane(txaChat);               
-           
-        //txaChat.setPreferredSize(new Dimension(200,100));
+       
+        jspChat = new JScrollPane(txaChat);                                 
         txaChat.setColumns(30);
         txaChat.setLineWrap(true);
         jspChat.setPreferredSize(new Dimension(350,100));
@@ -321,8 +377,6 @@ public class PainelDoJogo extends javax.swing.JPanel {
         //Revalida e repinta o painel
         revalidate(); repaint();
         
-        //Fim ;-). Falta adicionar alguns métodos na classe, mas até hoje acho que finalizo a interface
-        //Renato
     }
     /**
      * Retorna um container com as letras de cada linha do tabuleiro

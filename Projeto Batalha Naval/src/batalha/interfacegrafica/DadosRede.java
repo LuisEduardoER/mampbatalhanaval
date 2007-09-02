@@ -36,18 +36,24 @@ public class DadosRede extends JPanel{
         this.lbDadosEnviados = new JLabel("Dados Enviados");
         this.lbDadosRecebidos = new JLabel("Dados Recebidos");
         
-        JScrollPane paneEntrada = new JScrollPane();
-        JScrollPane paneSaida = new JScrollPane();
+        JScrollPane paneEntrada = new JScrollPane(areaEntrada);
+        JScrollPane paneSaida = new JScrollPane(areaSaida);
         
+        areaEntrada.setColumns(20);
+        areaEntrada.setLineWrap(true);
+        areaSaida.setColumns(20);
+        areaSaida.setLineWrap(true);
         //Instancia dois visualizadores para as textAreas
-        paneEntrada.setViewportView(areaEntrada);
-        paneEntrada.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        paneEntrada.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         paneEntrada.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        areaEntrada.setEditable(true);
         
-        paneSaida.setViewportView(areaSaida);
-        paneSaida.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        paneSaida.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         paneSaida.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        areaSaida.setEditable(true);
         
+        paneEntrada.setPreferredSize(new Dimension(250,70));
+        paneSaida.setPreferredSize(new Dimension(250,70));
         this.add(lbDadosEnviados);
         this.add(lbDadosRecebidos);
         this.add(paneEntrada);
@@ -56,15 +62,13 @@ public class DadosRede extends JPanel{
         //Configura as dimensões corretas
         lbDadosEnviados.setPreferredSize(new Dimension(100,20));
         lbDadosRecebidos.setPreferredSize(new Dimension(100,20));
-        areaEntrada.setPreferredSize(new Dimension(150,60));
-        areaSaida.setPreferredSize(new Dimension(150,60));
         
         //Configura o layout, adicionando espaçamento entre os componentes
-        layout.putConstraint(SpringLayout.WEST, lbDadosEnviados, 130, SpringLayout.WEST, this);
-        layout.putConstraint(SpringLayout.WEST, paneEntrada, 130, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.WEST, lbDadosEnviados, 100, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.WEST, paneEntrada, 50, SpringLayout.WEST, this);
         layout.putConstraint(SpringLayout.NORTH, paneEntrada, 5, SpringLayout.SOUTH, lbDadosEnviados);
-        layout.putConstraint(SpringLayout.WEST, lbDadosRecebidos, 390, SpringLayout.WEST, this);
-        layout.putConstraint(SpringLayout.WEST, paneSaida, 390, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.WEST, lbDadosRecebidos, 370, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.WEST, paneSaida, 320, SpringLayout.WEST, this);
         layout.putConstraint(SpringLayout.NORTH, paneSaida, 5, SpringLayout.SOUTH, lbDadosRecebidos);
 
     }
@@ -72,17 +76,35 @@ public class DadosRede extends JPanel{
     /**
      * Adiciona uma informação à área de entrada. Todo pacote que for recebido deve ser inserido nesta TextArea.
      */
-    public void addDadoEntrada(String dado){
+    public void addDadoEnviado(final String dado){
         
-        areaEntrada.append(dado);
+        SwingUtilities.invokeLater(
+            new Runnable(){
+                
+                public void run(){        
+                    System.out.println("Dados rede" + dado);
+                    areaEntrada.append(dado); //coloca os dados de entrada na JtextArea
+                    areaEntrada.setCaretPosition(areaEntrada.getText().length());
+                }
+            }
+        );
     }
 
     /**
      * Adiciona uma informação à área de saída. Todo pacote que for enviado deve ser inserido nesta TextArea.
      */    
-    public void addDadoSaida(String dado){
+    public void addDadoRecebido(final String dado){
 
-        areaSaida.append(dado);
+        SwingUtilities.invokeLater(
+            new Runnable(){
+                
+                public void run(){
+                    
+                    areaSaida.append(dado);
+                    areaSaida.setCaretPosition(areaSaida.getText().length());
+                }
+            }
+        );
     }
     
 }

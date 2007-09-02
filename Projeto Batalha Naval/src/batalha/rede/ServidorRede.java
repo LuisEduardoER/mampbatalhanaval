@@ -8,6 +8,9 @@
  */
 
 package batalha.rede;
+
+import batalha.interfacegrafica.DadosRede; //para setar os dados de entrada e saida
+import batalha.interfacegrafica.jogo.AreaCentral;
 import batalha.interfacegrafica.PainelDoJogo;
 
 
@@ -15,6 +18,7 @@ import java.io.*;
 import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 /**
  *
@@ -60,6 +64,7 @@ public class ServidorRede extends Thread {
     painel.getTabuleiroInimigo().addMouseListener(
             new MouseAdapter()  {
             public void mousePressed(MouseEvent me) {
+                if(painel.getVez()) {
                     String msg = new String();
                     msg = msg + "!";
                     msg = msg + me.getX();
@@ -68,6 +73,7 @@ public class ServidorRede extends Thread {
                     msg = msg + ",";
                     EnviaDado(msg, "Jogada");
                 }
+            }
         }
     );    
 
@@ -75,18 +81,24 @@ public class ServidorRede extends Thread {
     painel.getBotaoValidaPosicionamento().addActionListener(
             new ActionListener(){
                 public void actionPerformed(ActionEvent ae){
-                    String matriz[][] = painel.getMatrizDoJogador();
-                    String msg ="";
-                    msg = msg + "#";
-                    
-                    //transforma a matriz em um String
-                    for(int i = 0;i<10;i++) {
-                        for(int j=0;j<10;j++) {
-                            msg = msg + matriz[i][j];
-                            msg = msg + ",";
+                    if(painel.getConectado()) {
+                        painel.setJogadorPronto(true);
+                        String matriz[][] = painel.getMatrizDoJogador();
+                        String msg ="";
+                        msg = msg + "#";
+
+                        //transforma a matriz em um String
+                        for(int i = 0;i<10;i++) {
+                            for(int j=0;j<10;j++) {
+                                msg = msg + matriz[i][j];
+                                msg = msg + ",";
+                            }
                         }
+                        EnviaDado( msg, "Matriz" );
                     }
-                    EnviaDado( msg, "Matriz" );
+                    else {
+                        JOptionPane.showMessageDialog(null,"AGUARDE A CONEXÃO SER ESTABELECIDA E TENTE NOVAMENTE", "ERRO DE CONEXÃO", JOptionPane.WARNING_MESSAGE);
+                    }
                 }
             }
     );
@@ -102,10 +114,11 @@ public class ServidorRede extends Thread {
         }
  }
  
- private void EnviaDado( String msg, String origem ){ // funcao que envia a msg...
+    private void EnviaDado( String msg, String origem ){ // funcao que envia a msg...
      try{
          if(origem.equals("Chat")) {
              painel.atualizaChat(painel.getNick()+ " diz: " + msg + "\n" ); //escreve na propria tela
+             painel.getAreaCentral().getDadosDaRede().addDadoEnviado( painel.getNick()+ " diz: " + msg + "\n" );
              saida.writeObject("@" + painel.getNick() + " diz: " + msg);//escreve no buffer..
          }
          else if((origem.equals("Matriz")) || (origem.equals("Jogada"))) {
@@ -114,6 +127,7 @@ public class ServidorRede extends Thread {
          saida.flush(); //limpar o buffer
          
       }catch( IOException io){//caso de erro...
+         painel.setConectado(false);
          painel.atualizaChat("\nConexao perdida.");
          painel.atualizaChat("\n\nDESDE JA OBRIGADO! EQUIPE MAMP&R ");
      }
@@ -159,7 +173,9 @@ public class ServidorRede extends Thread {
     private void EsperaConexao() throws IOException{ //espera por conexao...
      painel.atualizaChat( "Esperando por Conexao...\n");
      conexao = servidor.accept(); //quando chegado na porta aceita...
-     //mostra msg de recebimento...
+    //conexao estabelecida no servidor
+     painel.setConectado(true);
+    //mostra msg de recebimento...
      painel.atualizaChat( "Conexao recebida de: " +
              conexao.getInetAddress().getHostName() + "\n");
   }  
@@ -169,6 +185,9 @@ public class ServidorRede extends Thread {
      // displayArea.setText("\nEsperando por conexão\n" );//quando inciado o cliente mostra...essa msg
       
       conexao = new Socket( InetAddress.getByName( painel.getIp()), 5000);//liga na porta 5000
+      //conexao estabelecida no cliente
+      painel.setConectado(true);
+
       //mostra que a conexao foi feita no nome de conexao tal...
       painel.atualizaChat("Conectado no: " + conexao.getInetAddress().getHostName() + "\n");
    }
@@ -185,24 +204,34 @@ public class ServidorRede extends Thread {
     //processa a conexao com o cliente...
     private void ProcessaConexao() throws IOException{
      
-    // displayArea.setEditable( false );//para naum apagar o que foi escrito
+     DadosRede pegaDados = new DadosRede();
      
      String msg = "CONEXÃO COMPLETADA\n";
-     painel.atualizaChat("__________Bem vindo ao MAMP Messenger__________\n" );
+     painel.atualizaChat("___________Bem vindo ao MAMP Messenger___________\n" );
      String msg_fecha = "";
      saida.writeObject( msg ); //escreve no display do cliente quando feita a conexao..
-     saida.flush(); //limpa o buffer de saida...
      
-     //enterField.setEnabled( true );//e habilita pra digitar e enviar msgs...
+     //invoca metodo para mostrar os dados que estara passando pela rede  
+     painel.getAreaCentral().getDadosDaRede().addDadoRecebido( msg )     ;
+     
+     saida.flush(); //limpa o buffer de saida...
      
      do{
          try{
              msg = ( String ) entrada.readObject();
+             
+             //invoca metodo para mostrar os dados que estara passando pela rede  
+             painel.getAreaCentral().getDadosDaRede().addDadoRecebido( msg )     ;
+             
              String pacote = msg.substring(0,1);
              if(pacote.equals("@")) {
                 painel.atualizaChat(msg.substring(1) + "\n");
+                
+                 //invoca metodo para mostrar os dados do chat passando pela rede  
+                painel.getAreaCentral().getDadosDaRede().addDadoRecebido( "\n CHAT: " + msg ) ;
              } 
              else if(pacote.equals("#")){
+                 //entrar nesse if significa que o adversário configurou seu tabuleiro
                  String[][] matriz = new String[10][10];
                  String aux = "";
                  char caracter;
@@ -218,6 +247,12 @@ public class ServidorRede extends Thread {
                      }
                  }
                  painel.setMatrizInimigo(matriz);
+                 if(painel.getJogadorPronto()){
+                    JOptionPane.showMessageDialog(null,"VOCÊ COMEÇA JOGANDO", "AVISO", JOptionPane.WARNING_MESSAGE);
+                    painel.setVez(true);
+                 }
+                 //invoca metodo para mostrar os dados da matriz passando pela rede  
+                painel.getAreaCentral().getDadosDaRede().addDadoRecebido( "\n MATRIZ: " + matriz ) ;
              }
              else if(pacote.equals("!")){
                  //desenhar a imagem jogada no tabuleiro do jogador

@@ -43,6 +43,9 @@ public class TabuleiroInimigo extends JPanel {
     //Imagem do cursor
     private Image imagemCursor = null;
 
+    //Boolean que indica de quem é a vez: true = jogador e false = adversário
+    protected boolean vez;
+    
     /**
      * Construtor da classe TabuleiroInimigo
      */
@@ -62,6 +65,7 @@ public class TabuleiroInimigo extends JPanel {
          this.mouseMotionHandler = new MouseMotionHandler();
          this.setEnabled(false); //Inicialmente está desabilitado
          setMatrizLogica(null); //teste apenas
+         this.vez = false;
     }
     
     /**
@@ -74,6 +78,14 @@ public class TabuleiroInimigo extends JPanel {
         addMouseMotionListener(this.mouseMotionHandler);
         this.posicaoCursor = new Point(-1,-1);
         repaint();
+    }
+
+    /*
+     * Seta a vez
+     */
+    public void setVez(boolean v) {
+    
+        this.vez = v;
     }
     
     /**
@@ -203,7 +215,9 @@ public class TabuleiroInimigo extends JPanel {
         
         public void mousePressed(MouseEvent me){
             
-            configuraHit(me.getX(),me.getY());
+            if(vez) {
+                configuraHit(me.getX(),me.getY());
+            }
         }
         
     }

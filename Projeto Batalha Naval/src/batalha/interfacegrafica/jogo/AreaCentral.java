@@ -53,8 +53,8 @@ public class AreaCentral extends JPanel{
     
     //Botões que o usuário deve escolher para escolher seu navio
     private JButton[] containerDosNavios = null;
-    //Botão de validação da configuração. Só deve ser validado depois que o jogador tenha configurado seus navios E que tenha recebido
-    //a matriz lógica do inimigo
+    //Botão de validação da configuração. Só deve ser validado depois que o jogador tenha configurado seus navios e a conexão 
+    //estabelecida
     private JButton botaoValidaPosicionamento = null;
     //Array com as imagens de cada navio (são ícones para os botões)
     private ImageIcon[] imagens = null;
@@ -96,6 +96,9 @@ public class AreaCentral extends JPanel{
     //Constantes para o uso do CardLayout, que gerencia o layout deste objeto.
     private static final String NAVIOS_PANE = "Conteudo dos Navios",
                                 REDE_PANE = "Conteudo da Rede";
+    
+    //boolean que informa se existe conexão estabelecida
+    protected boolean conectado;
     
     /**
      * Construtor da classe AreaCentral
@@ -181,6 +184,22 @@ public class AreaCentral extends JPanel{
         //habilitaBotaoOk
         this.add(painelConteudoNavios,NAVIOS_PANE);
         this.add(dadosRede,REDE_PANE);
+        
+        //inicialmente não existe conexão
+        this.conectado = false;
+
+    }
+    
+    /*
+     * Seta o valor do campo conectado
+     */
+    public void setConectado(Boolean con) {
+        
+        this.conectado = con;
+    }
+    
+    public DadosRede getDadosDaRede(){
+              return dadosRede;
     }
    
 /* 
@@ -225,10 +244,12 @@ public class AreaCentral extends JPanel{
                        //Seleciona o painel a ser exibido pelo CardLayout. Percebam que não é necessário nenhum tipo de validação
                        //do container, isto é feito automaticamente pelo próprio gerenciador de layout CardLayout
                        //Esse está nos meus favoritos! ;-)
-                       CardLayout c = (CardLayout) AreaCentral.this.getLayout();
-                       c.show(AreaCentral.this, REDE_PANE);
-                       //Habilita o tabuleiro inimigo
-                       tabuleiroInimigo.ligar();
+                        if(conectado) {
+                           CardLayout c = (CardLayout) AreaCentral.this.getLayout();
+                           c.show(AreaCentral.this, REDE_PANE);
+                           //Habilita o tabuleiro inimigo
+                           tabuleiroInimigo.ligar();
+                        }
                     }
                 }
         );

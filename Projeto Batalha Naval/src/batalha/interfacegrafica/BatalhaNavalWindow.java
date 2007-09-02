@@ -330,8 +330,7 @@ public class BatalhaNavalWindow extends JFrame{
         public void actionPerformed(ActionEvent ae){
         
             BatalhaNavalWindow.this.remove(BatalhaNavalWindow.this.getContentPane());
-            //copia o apelido do jogador para a variável
-       //     apelidoJogador = txfApelido.getText();
+            //copia o apelido do jogador para a variável       
             
             //Verifica se o campo de texto para adicionar novo IP está habilitado (se estiver é porque um novo IP foi adicionado)
             //e se algum IP foi realmente digitado ali
@@ -343,7 +342,12 @@ public class BatalhaNavalWindow extends JFrame{
             
             //funcoes para passar o nick e o Ip para Painel Do Jogo
             painel.setNick( txfApelido.getText() ); 
-            painel.setIp( (String) cbIPs.getSelectedItem() );
+            if(chbNovoIP.isSelected()) {
+                painel.setIp(txfNovoIP.getText());
+            }
+            else {
+                painel.setIp( (String) cbIPs.getSelectedItem() );
+            }
             painel.setServidor(isServidor);
             painel.setVisible(true);
 
@@ -352,7 +356,7 @@ public class BatalhaNavalWindow extends JFrame{
             BatalhaNavalWindow.this.validate();
             BatalhaNavalWindow.this.pack();
             SwingUtilities.updateComponentTreeUI(BatalhaNavalWindow.this);
-            jogo.start();
+            jogo.start(); //inicia a thread do jogo...
         }
     }
         
