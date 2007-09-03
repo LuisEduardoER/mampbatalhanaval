@@ -226,8 +226,8 @@ public class BatalhaNavalWindow extends JFrame{
         */
         try {
             
-            streamSaida = new PrintWriter(new FileWriter(ARQUIVO_IPs));
-            CharSequence cs = novoIP.subSequence(0, novoIP.length()-1);
+            streamSaida = new PrintWriter(new FileWriter(ARQUIVO_IPs,true));
+            CharSequence cs = novoIP.subSequence(0, novoIP.length()-1) + "\n";            
             streamSaida.append(cs);
             streamSaida.flush();
         } 
