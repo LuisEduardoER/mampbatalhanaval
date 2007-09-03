@@ -9,6 +9,8 @@
 package batalha.interfacegrafica.jogo;
 
 import batalha.interfacegrafica.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -17,7 +19,7 @@ import javax.swing.border.TitledBorder;
 
 /**
  *
- * @author Renato E. Silva
+ * @author Renato, Paulo, Alexandre, Moisés e Marcelo
  * 
  * @date 21/08/2007
  * @version 0.1
@@ -65,7 +67,7 @@ public class AreaCentral extends JPanel{
      * @TODO: O pacote que está sendo utilizado para carregar as imagens é o próprio projeto. Precisamos descobrir como fazer o carre-
      * gamento correto.
      */
-    protected static final String INICIO_IMAGENS = "";
+    protected static final String INICIO_IMAGENS = "src/imagens/";
     //Armazena a imagem do último navio selecionado
     protected Image imagemUltimoNavio = null;
     //Armazena o nome do último navio selecionado
@@ -74,10 +76,7 @@ public class AreaCentral extends JPanel{
     protected int larguraUltimoNavio = 0, 
                 posicaoUltimoNavio = -1;
     /**
-     * Indica se o navio está configurado na vertical ou horizontal. Uma forma mais intuitiva, para o usuário, é adicionar um cursor que
-     * possa indicar se o navio está na horizontal ou vertical. Este desenvolvimento está sendo feito por mim.
-     * 
-     * FEITO.
+     * Indica se o navio está configurado na vertical ou horizontal.
      * @author: Renato
      */
     protected boolean verticalShip = false;
@@ -149,7 +148,7 @@ public class AreaCentral extends JPanel{
         //Inicializa as imagens
         for(int i = 0; i < 5; i++)
         { 
-            imagens[i] = new ImageIcon(INICIO_IMAGENS+nomeDosNavios[i]+".gif");
+                imagens[i] = new ImageIcon(INICIO_IMAGENS+nomeDosNavios[i]+".gif");
         }
         
         //Apenas inicializa os botões. A configuração de nomes e tamanho de cada botão foi configurada fora do laço, logo abaixo.
@@ -226,15 +225,9 @@ public class AreaCentral extends JPanel{
      * Habilita o botão que confirma que tudo foi corretamente configurado.
      * A ação ligada a este botão é liberar o tabuleiro do inimigo, para que o jogo inicie
      *
-     * @TODO: AQUI ENTRA A LÓGICA DE "LOCK" DA QUAL EU FALAVA. DEVEMOS SINCRONIZAR O ENVIO DA MATRIZ LÓGICA E ÍNICIO DO JOGO.
      */
     protected void habilitaBotaoOk(){
         
-        /**
-         * AQUI ENTRA UMA DAS LÓGICAS MAIS DIFÍCEIS DESTE JOGO. DEVEMOS SINCRONIZAR A HABILITAÇÃO DESTE BOTÃO SOMENTE
-         * QUANDO OS DOIS JOGADORES TIVEREM ACABADO DE POSICIONAR SEUS NAVIOS E TIVEREM ENVIADO SUA MATRIZ LÓGICA PARA 
-         * O OUTRO JOGADOR.
-         */
         botaoValidaPosicionamento.setEnabled(true);
         //Habilita o botão
         botaoValidaPosicionamento.addActionListener(
@@ -249,6 +242,8 @@ public class AreaCentral extends JPanel{
                            c.show(AreaCentral.this, REDE_PANE);
                            //Habilita o tabuleiro inimigo
                            tabuleiroInimigo.ligar();
+                           //Toca o som de configuração de navio
+                           Som.stopAudio(Som.SOM_CONFIG);
                         }
                     }
                 }

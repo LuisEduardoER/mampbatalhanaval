@@ -12,7 +12,7 @@ import java.awt.Image;
 import java.awt.Point;
 
 /**
- * @author Renato
+ * @author Renato, Paulo, Alexandre, Moisés e Marcelo
  *
  * @date 24/08/2007
  * @version 0.1

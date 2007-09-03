@@ -10,6 +10,7 @@ package batalha.interfacegrafica;
 import batalha.interfacegrafica.jogo.*;
 import batalha.rede.*;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 import javax.swing.*;
 import java.net.*;
 import java.io.*;
@@ -17,7 +18,7 @@ import java.awt.event.*;
 import java.awt.*;
 
 /**
- * @author Renato E. Silva
+ * @author Renato, Paulo, Alexandre, Moisés e Marcelo
  */
 
 public class BatalhaNavalWindow extends JFrame{
@@ -72,6 +73,7 @@ public class BatalhaNavalWindow extends JFrame{
     public BatalhaNavalWindow() {
         
         configuraFrame();
+//        configuraBarraDeMenu();
     }
     
     private void configuraFrame() {
@@ -151,7 +153,7 @@ public class BatalhaNavalWindow extends JFrame{
         configuraLayout();
         
         this.pack();
-        
+        this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
     }
@@ -195,8 +197,22 @@ public class BatalhaNavalWindow extends JFrame{
             
             streamEntrada = new BufferedReader(new FileReader(ARQUIVO_IPs));
             String l = null;
-            while((l = streamEntrada.readLine())!= null) ips.add(l);
+           
             
+            l = streamEntrada.readLine();
+            
+            if(l == null){
+                
+                ips.add(" ");
+               
+            }
+            else{ 
+                String ipsStr[] = l.split("/");
+            
+            
+            for(String ip: ipsStr)
+                ips.add(ip);
+            }
             if(ips.size() > 0) ultimoIP = ips.get(0);
             cbIPs = new JComboBox(ips.toArray());
             cbIPs.setPreferredSize(new Dimension(200,25));
@@ -227,7 +243,7 @@ public class BatalhaNavalWindow extends JFrame{
         try {
             
             streamSaida = new PrintWriter(new FileWriter(ARQUIVO_IPs,true));
-            CharSequence cs = novoIP.subSequence(0, novoIP.length()-1) + "\n";            
+            CharSequence cs = novoIP.subSequence(0, novoIP.length()-1) + "/";            
             streamSaida.append(cs);
             streamSaida.flush();
         } 
@@ -240,24 +256,7 @@ public class BatalhaNavalWindow extends JFrame{
                     streamSaida.close();
          }           
     }
-    
-    /**
-     * MÓDULO DO SERVIDOR
-     *
-     * ESTE MÉTODO PODE NA VERDADE SER UMA CLASSE, TUDO DEPENDE DE ASPECTO DE PROJETO
-     */
-    private void carregaModuloServidor() {
-
-    }
-
-    /**
-     * MÓDULO DO CLIENTE
-     *
-     * ESTE MÉTODO PODE NA VERDADE SER UMA CLASSE, TUDO DEPENDE DE ASPECTO DE PROJETO
-     */    
-    private void carregaModuloCliente() {
-
-    }
+   
     
     /**
      * ButtonGroupHandler.java
@@ -351,11 +350,12 @@ public class BatalhaNavalWindow extends JFrame{
             painel.setServidor(isServidor);
             painel.setVisible(true);
 
-            jogo = new ServidorRede(painel);
+            jogo = new RedeManager(painel);
             BatalhaNavalWindow.this.setContentPane(painel);
             BatalhaNavalWindow.this.validate();
             BatalhaNavalWindow.this.pack();
             SwingUtilities.updateComponentTreeUI(BatalhaNavalWindow.this);
+            Som.playAudio(Som.SOM_CONFIG);
             jogo.start(); //inicia a thread do jogo...
         }
     }
