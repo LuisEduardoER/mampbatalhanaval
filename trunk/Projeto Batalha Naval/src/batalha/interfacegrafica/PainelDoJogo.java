@@ -9,7 +9,7 @@
 package batalha.interfacegrafica;
 
 import batalha.interfacegrafica.jogo.*;
-import batalha.rede.RedeManager;
+import batalha.rede.GerenciadorJogo;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;

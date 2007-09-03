@@ -69,7 +69,9 @@ public class BatalhaNavalWindow extends JFrame{
     
     private Thread jogo;
 
-    
+    /**
+     * Construtor da classe BatalhaNavalWindow
+     */
     public BatalhaNavalWindow() {
         
         configuraFrame();
@@ -155,6 +157,7 @@ public class BatalhaNavalWindow extends JFrame{
         this.pack();
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //this.addWindowListener()
         this.setVisible(true);
     }
     
@@ -233,13 +236,7 @@ public class BatalhaNavalWindow extends JFrame{
      * Adiciona um novo ip no arquivo
      */
     private void adicionarNovoIP(String novoIP) {
-        
-        /**
-        * @TODO: não consegui dar append nesta string com o restante do arquivo. Vou dar uma pesquisada aqui. Se alguém conseguir,
-        * coloque como FEITO.
-        *
-        * @author Renato
-        */
+       
         try {
             
             streamSaida = new PrintWriter(new FileWriter(ARQUIVO_IPs,true));
@@ -307,6 +304,13 @@ public class BatalhaNavalWindow extends JFrame{
         }
     }
     
+    /**
+     * CheckBoxHandler.java
+     *
+     * Criado em 25 de Agosto de 2007, 22:28
+     *
+     * O propósito desta classe é lidar com eventos sobre o checkbox
+     */ 
     private class CheckBoxHandler implements ItemListener{
         
         public void itemStateChanged(ItemEvent e){
@@ -324,12 +328,19 @@ public class BatalhaNavalWindow extends JFrame{
         }
     }
     
+    /**
+     * ButtonHandler.java
+     *
+     * Criado em 25 de Agosto de 2007, 22:28
+     *
+     * O propósito desta classe é lidar com eventos sobre o botão de jogar
+     */
     private class ButtonHandler implements ActionListener{
         
         public void actionPerformed(ActionEvent ae){
         
             BatalhaNavalWindow.this.remove(BatalhaNavalWindow.this.getContentPane());
-            //copia o apelido do jogador para a variável       
+      
             
             //Verifica se o campo de texto para adicionar novo IP está habilitado (se estiver é porque um novo IP foi adicionado)
             //e se algum IP foi realmente digitado ali
@@ -341,22 +352,25 @@ public class BatalhaNavalWindow extends JFrame{
             
             //funcoes para passar o nick e o Ip para Painel Do Jogo
             painel.setNick( txfApelido.getText() ); 
+            
             if(chbNovoIP.isSelected()) {
                 painel.setIp(txfNovoIP.getText());
             }
             else {
                 painel.setIp( (String) cbIPs.getSelectedItem() );
             }
+            
             painel.setServidor(isServidor);
             painel.setVisible(true);
 
-            jogo = new RedeManager(painel);
+            //Configura  a thread de jogo e inicializa
+            jogo = new GerenciadorJogo(painel);
             BatalhaNavalWindow.this.setContentPane(painel);
             BatalhaNavalWindow.this.validate();
             BatalhaNavalWindow.this.pack();
             SwingUtilities.updateComponentTreeUI(BatalhaNavalWindow.this);
             Som.playAudio(Som.SOM_CONFIG);
-            jogo.start(); //inicia a thread do jogo...
+            jogo.start(); 
         }
     }
         

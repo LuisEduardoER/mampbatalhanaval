@@ -1,10 +1,9 @@
 /*
- * ServidorRede.java
+ * GerenciadorJogo.java
  *
- * Created on 27 de Agosto de 2007, 22:44
+ * Criado em 27 de Agosto de 2007, 22:44
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * Esta classe gerencia o controle do fluxo de rede, e controla a lógica de sincronização do jogo
  */
 
 package batalha.rede;
@@ -26,7 +25,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Renato, Paulo, Alexandre, Moisés e Marcelo
  */
-public class RedeManager extends Thread {
+public class GerenciadorJogo extends Thread {
     
     private PainelDoJogo painel;
     private ObjectOutputStream saida;
@@ -35,7 +34,7 @@ public class RedeManager extends Thread {
     private Socket conexao;
     
     /** Creates a new instance of ServidorRede */
-    public RedeManager(PainelDoJogo p) {
+    public GerenciadorJogo(PainelDoJogo p) {
 
         this.painel = p;
     }
@@ -118,7 +117,12 @@ public class RedeManager extends Thread {
                         String matriz[][] = painel.getMatrizDoJogador();
                         String msg ="";
                         msg = msg + "#";
-
+                       CardLayout c = (CardLayout) painel.getAreaCentral().getLayout();
+                       c.show(painel.getAreaCentral(), AreaCentral.REDE_PANE);
+                       //Habilita o tabuleiro inimigo
+                       painel.getTabuleiroInimigo().ligar();
+                       //Toca o som de configuração de navio
+                       Som.stopAudio(Som.SOM_CONFIG);    
                         //transforma a matriz em um String
                         for(int i = 0;i<10;i++) {
                             for(int j=0;j<10;j++) {
