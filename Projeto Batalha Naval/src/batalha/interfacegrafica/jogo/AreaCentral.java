@@ -93,7 +93,7 @@ public class AreaCentral extends JPanel{
     //Cria uma fonte para o título da borda
     private Font f = new Font("Arial Bold",Font.BOLD,10);
     //Constantes para o uso do CardLayout, que gerencia o layout deste objeto.
-    private static final String NAVIOS_PANE = "Conteudo dos Navios",
+    public static final String NAVIOS_PANE = "Conteudo dos Navios",
                                 REDE_PANE = "Conteudo da Rede";
     
     //boolean que informa se existe conexão estabelecida
@@ -197,6 +197,9 @@ public class AreaCentral extends JPanel{
         this.conectado = con;
     }
     
+    /**
+     * Retorna o painel dos dados da rede, para serem atualizado na classe de gerenciamento do jogo
+     */
     public DadosRede getDadosDaRede(){
               return dadosRede;
     }
@@ -229,25 +232,6 @@ public class AreaCentral extends JPanel{
     protected void habilitaBotaoOk(){
         
         botaoValidaPosicionamento.setEnabled(true);
-        //Habilita o botão
-        botaoValidaPosicionamento.addActionListener(
-                //Classe anônima para ouvir eventos sobre o botão
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                       //Seleciona o painel a ser exibido pelo CardLayout. Percebam que não é necessário nenhum tipo de validação
-                       //do container, isto é feito automaticamente pelo próprio gerenciador de layout CardLayout
-                       //Esse está nos meus favoritos! ;-)
-                        if(conectado) {
-                           CardLayout c = (CardLayout) AreaCentral.this.getLayout();
-                           c.show(AreaCentral.this, REDE_PANE);
-                           //Habilita o tabuleiro inimigo
-                           tabuleiroInimigo.ligar();
-                           //Toca o som de configuração de navio
-                           Som.stopAudio(Som.SOM_CONFIG);
-                        }
-                    }
-                }
-        );
     }
     
     
