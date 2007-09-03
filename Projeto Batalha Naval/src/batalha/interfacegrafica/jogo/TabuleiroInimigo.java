@@ -17,7 +17,7 @@ import java.awt.event.*;
 import java.util.Random;
 
 /**
- * @author Renato
+ * @author Renato, Paulo, Alexandre, Moisés e Marcelo
  *
  * @date 22/08/2007
  * @version 0.1
@@ -59,7 +59,7 @@ public class TabuleiroInimigo extends JPanel {
          //Inicializa o arrayList para armazenar as imagens
          this.imagens = new ArrayList<ImagemDoTabuleiro>();
          
-         imagemCursor = new ImageIcon("cursor_pata.gif").getImage();
+         imagemCursor = new ImageIcon("src/imagens/cursor_pata.gif").getImage();
          //Configura listeners
          this.mouseHandler = new MouseHandler();
          this.mouseMotionHandler = new MouseMotionHandler();
@@ -156,41 +156,29 @@ public class TabuleiroInimigo extends JPanel {
         if(checkPosicao == HIT_AGUA){
             
             matrizLogicaDoTabuleiro[x/25][y/25] = "Y";
-            imagens.add(new ImagemDoTabuleiro(new ImageIcon("splash.gif").getImage(), p));
+            imagens.add(new ImagemDoTabuleiro(new ImageIcon("src/imagens/splash.gif").getImage(), p));
+            Som.playAudio(Som.ERRO);
             repaint();
-            System.out.println("Acertou agua!");
-            
-            /**
-             * AQUI VEM A LÓGICA DE ENVIAR A IMAGEM E PONTO DE ACERTO PARA O JOGADOR ADVERSÁRIO, PELA REDE.
-             * 
-             */
+            this.vez = false;
+           
             
         //Acertou navio! Viva!    
         } else if(checkPosicao == HIT_NAVIO){
             
             matrizLogicaDoTabuleiro[x/25][y/25] = "X";
-            imagens.add(new ImagemDoTabuleiro(new ImageIcon("explodido.gif").getImage(), p));
+            imagens.add(new ImagemDoTabuleiro(new ImageIcon("src/imagens/explodido.gif").getImage(), p));
+            Som.playAudio(Som.ACERTO);
             repaint();
-            System.out.println("Acertou navio!");
-            
-            /**
-             * AQUI VEM A LÓGICA DE ENVIAR A IMAGEM E PONTO DE ACERTO PARA O JOGADOR ADVERSÁRIO, PELA REDE.
-             * 
-             */
-            
+        
+        //Se toca, cabeção! T_T    
         } else{
             
             JOptionPane.showMessageDialog(null,"Esta posição já foi clicada!", "Posição já escolhida",JOptionPane.INFORMATION_MESSAGE);
-            
-            /**
-             * PROCESSAMENTO LOCAL. APENAS DIZ AO JOGADOR QUE ELE CLICOU EM UMA POSIÇÃO QUE JÁ FOI CLICADA.
-             * ISSO SIGNIFICA QUE ELE AINDA NÃO PERDEU A VEZ.
-             */
         }
     }
     
     //Verifica o que o jogador acertou
-    private int getHit(int x, int y){
+    public int getHit(int x, int y){
         
         int xHit = x/25;
         int yHit = y/25;
@@ -199,7 +187,6 @@ public class TabuleiroInimigo extends JPanel {
         //Acertou alguma coisa que não era navio (por exemplo, alguma outra parte já acertada)
         else if(matrizLogicaDoTabuleiro[xHit][yHit].equalsIgnoreCase("X") || matrizLogicaDoTabuleiro[xHit][yHit].equalsIgnoreCase("Y"))
                 return HIT_PREV_HIT;
-        
         return HIT_NAVIO;
     }
     

@@ -9,12 +9,13 @@
 package batalha.interfacegrafica;
 
 import batalha.interfacegrafica.jogo.*;
-import batalha.rede.ServidorRede;
+import batalha.rede.RedeManager;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+
 /**
- * @author  Renato
+ * @author  Renato, Paulo, Alexandre, Moisés e Marcelo
  *
  * @date 19/08/2007
  * @version 0.1
@@ -30,6 +31,12 @@ import java.awt.event.*;
  *
  * @date 25/08/2007
  * @version 0.5
+ *
+ * @date 01/09/2007
+ * @version 0.6
+ *
+ * @date 03/09/2007
+ * @version 0.7
  */
 public class PainelDoJogo extends javax.swing.JPanel {
     
@@ -43,6 +50,9 @@ public class PainelDoJogo extends javax.swing.JPanel {
      * http://java.sun.com/docs/books/tutorial/uiswing/layout/box.html
      */
     
+    //Label para mostrar de quem é a vez
+    private JLabel lbVez, 
+                   lbPontuacao;
     //TextField para envio de mensagens no txaChat
     private JTextField txfMensagem;
     //Area Central, que primeiro exibe os navios depois os dados da rede
@@ -75,6 +85,8 @@ public class PainelDoJogo extends javax.swing.JPanel {
     private boolean jogadorPronto;
     //boolean que indica a vez: true = vez do jogador e false = vez do adversário
     private boolean vez;
+    //inteiro que armazena a pontuação do jogador
+    private int pontos;
     
     /** 
      * Construtor da classe PainelDoJogo
@@ -168,16 +180,43 @@ public class PainelDoJogo extends javax.swing.JPanel {
     }
     
     //seta a vez
-    public void setVez(boolean v) {
+    public void setVez(final boolean v) {
         
         this.vez = v;
-        this.tabuleiroInimigo.setVez(v);
+        SwingUtilities.invokeLater(
+            new Runnable(){
+                public void run(){
+                    
+                    lbVez.setText(String.format("%s sua vez", v ? "É": "Não é"));
+                }
+            }
+        );
     }
     
     //retorna o boolean que indica de quem é a vez
     public boolean getVez() {
     
         return this.vez;
+    }
+    
+    //acrescenta 1 ao número de pontos do jogador
+    public void somaPontuacao() {
+        
+        this.pontos++;
+        SwingUtilities.invokeLater(
+            new Runnable(){
+                public void run(){
+                    
+                    lbPontuacao.setText("Sua pontuação atual é "+pontos);
+                }
+            }
+        );
+    }
+    
+    //retorna a pontuação do jogador
+    public int getPontos() {
+        
+        return this.pontos;
     }
     /****************************************************************************************/
     
@@ -193,16 +232,22 @@ public class PainelDoJogo extends javax.swing.JPanel {
         
         //Instancia os objetos
         tabuleiroInimigo = new TabuleiroInimigo();
-        //jspChat = new javax.swing.JScrollPane();
         txaChat = new javax.swing.JTextArea();
-        
-         jpLogo = new javax.swing.JPanel();
+        jpLogo = new javax.swing.JPanel();
         btPoderEspecial = new javax.swing.JButton();
         btEnviarMensagem = new javax.swing.JButton();
+        
         areaCentral = new AreaCentral(tabuleiroInimigo);
         meuTabuleiro = new TabuleiroJogador(areaCentral);
         txfMensagem = new JTextField(30);
         
+        //inicia o label da vez
+        this.lbVez = new JLabel("Este label indica de quem é a vez");
+        this.lbVez.setPreferredSize(new Dimension(160,50));
+        
+        //inicia o label da pontuação
+        this.lbPontuacao = new JLabel("Este label indica sua pontuação");
+        this.lbPontuacao.setPreferredSize(new Dimension(160,50));
         //inicialmente não existe conexão estabelecida
         this.conectado = false;
 
@@ -211,6 +256,9 @@ public class PainelDoJogo extends javax.swing.JPanel {
         
         //a vez deve ser false até o jogo começar
         this.vez = false;
+        
+        //o jogador começa com 0 ponto e, se tiver sorte, esse número muda
+        this.pontos = 0;
         
         //Cria uma box, que é um gerenciador de containeres. Neste caso criamos uma box horizontal, e todo container adicionado à box
         //o será da esquerda para a direita. Para quem quiser saber mais sobre Box (BoxLayout), indiquei o link do tutorial da Sun
@@ -301,9 +349,22 @@ public class PainelDoJogo extends javax.swing.JPanel {
         //Damos um espaço entre o painel do tabuleiro e o painel com os navios. Até aqui configuramos toda a área dos tabuleiros.
         boxHorizontalCima.add(new Box.Filler(distPadraoX,distPadraoX,distPadraoX));
         
+        //Esta box empacota os labels de pontuação e vez
+        Box boxHorizontalMeio1 = Box.createHorizontalBox();
+        
+        boxHorizontalMeio1.add(lbVez);
+        Dimension distLabel = new Dimension(100,50);
+        boxHorizontalMeio1.add(new Box.Filler(distLabel,distLabel,distLabel));
+        boxHorizontalMeio1.add(lbPontuacao);
+        
         //Esta box simplesmente empacota a área central, e será adicionada no meio deste objeto
-        Box boxHorizontalMeio = Box.createHorizontalBox();
-        boxHorizontalMeio.add(areaCentral);
+        Box boxHorizontalMeio2 = Box.createHorizontalBox();
+        boxHorizontalMeio2.add(areaCentral);
+        
+        Box boxVerticalMeio = Box.createVerticalBox();
+        
+        boxVerticalMeio.add(boxHorizontalMeio1);
+        boxVerticalMeio.add(boxHorizontalMeio2);
         
         //Por fim, configuramos a parte do chat. Esta parte também não é muito difícil. Primeiro criamos uma box horizontal
         Box boxHorizontalBaixo = Box.createHorizontalBox();
@@ -371,7 +432,7 @@ public class PainelDoJogo extends javax.swing.JPanel {
         
         //Adicionamos as boxes no painel do jogo
         this.add(boxHorizontalCima, BorderLayout.NORTH);
-        this.add(boxHorizontalMeio, BorderLayout.CENTER);
+        this.add(boxVerticalMeio, BorderLayout.CENTER);
         this.add(boxHorizontalBaixo, BorderLayout.SOUTH);
         
         //Revalida e repinta o painel

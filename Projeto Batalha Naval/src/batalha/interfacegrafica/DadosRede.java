@@ -13,7 +13,7 @@ import javax.swing.*;
 
 /**
  *
- * @author Usuario
+ * @author Renato, Paulo, Alexandre, Moisés e Marcelo
  */
 public class DadosRede extends JPanel{
     

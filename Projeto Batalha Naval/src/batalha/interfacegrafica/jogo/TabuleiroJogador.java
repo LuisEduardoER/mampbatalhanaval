@@ -10,6 +10,8 @@
 package batalha.interfacegrafica.jogo;
 
 import batalha.interfacegrafica.PainelDoJogo;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -17,7 +19,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * @author Renato
+ * @author Renato, Paulo, Alexandre, Moisés e Marcelo
  * 
  * @date 12/08/2007
  * @version 0.1
@@ -68,15 +70,12 @@ public class TabuleiroJogador extends JPanel{
      * 
      * Recebe uma referência à área de configuração de navio (no caso do tabuleiro do inimigo, esta área é nula, afinal só 
      * pode ser configurado o seu tabuleiro, não o do oponente)
-     * 
-     * 
-     * 
-     * 
+     *
      * @param areaCentral referência ao objeto da classe AreaCentral
      */ 
     public TabuleiroJogador(AreaCentral areaDeConfiguracaoDeNavio){
         
-        //this.setSize(250,250);
+
         this.setPreferredSize(new java.awt.Dimension(250,250));
         
         this.areaCentral = areaDeConfiguracaoDeNavio;
@@ -184,9 +183,11 @@ public class TabuleiroJogador extends JPanel{
         if(checkPosicao){
                  
                  //Atualiza o nome da imagem para "X.v", onde X é o nome do navio solicitado.
-                 if(areaCentral.verticalShip)
-                        imagensDoTabuleiro[areaCentral.posicaoUltimoNavio] = 
-                            new ImagemDoTabuleiro((new ImageIcon(nomeDoNavio+".gif").getImage()), normalizaPonto(x,y));
+                 if(areaCentral.verticalShip){
+
+                imagensDoTabuleiro[areaCentral.posicaoUltimoNavio] = 
+                        new ImagemDoTabuleiro((new ImageIcon(AreaCentral.INICIO_IMAGENS+nomeDoNavio+".gif").getImage()), normalizaPonto(x,y));
+                 }  
                  else imagensDoTabuleiro[areaCentral.posicaoUltimoNavio] = 
                             new ImagemDoTabuleiro(areaCentral.imagemUltimoNavio, normalizaPonto(x,y));
                  
@@ -380,8 +381,9 @@ public class TabuleiroJogador extends JPanel{
         if(checkPosicao == HIT_AGUA){
             
             matrizLogicaDoTabuleiro[x][y] = "Y";
+                
+            this.imagens.add(new ImagemDoTabuleiro(new ImageIcon(AreaCentral.INICIO_IMAGENS+"splash.gif").getImage(), p));
             
-            this.imagens.add(new ImagemDoTabuleiro(new ImageIcon("splash.gif").getImage(), p));
             repaint();
             
             
@@ -389,9 +391,9 @@ public class TabuleiroJogador extends JPanel{
         } else if(checkPosicao == HIT_NAVIO){
             
             matrizLogicaDoTabuleiro[x][y] = "X";
-            
-            this.imagens.add(new ImagemDoTabuleiro(new ImageIcon("explodido.gif").getImage(), p));
-            
+                
+            this.imagens.add(new ImagemDoTabuleiro(new ImageIcon(AreaCentral.INICIO_IMAGENS+"explodido.gif").getImage(), p));
+           
             repaint();
         }
     }
