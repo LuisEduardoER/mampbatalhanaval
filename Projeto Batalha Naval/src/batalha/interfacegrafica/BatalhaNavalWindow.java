@@ -80,9 +80,12 @@ public class BatalhaNavalWindow extends JFrame{
     
     private void configuraFrame() {
         
-        //Configura o layout do frame
-       // layoutFrame = new CardLayout();
-        //this.setLayout(layoutFrame);
+         try {                  
+            //para o Splash...espera 9 segundos e pokinhu... para criar a janela principal...
+            Thread.sleep( 9010 ); 
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
         
         //Container inicial
         cInicial = new Container();
@@ -157,7 +160,11 @@ public class BatalhaNavalWindow extends JFrame{
         this.pack();
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //this.addWindowListener()
+        
+        //ponhe o frame no centro da tela...
+        Dimension posicao = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation((posicao.width - this.getSize().width)/2,(posicao.height - this.getSize().height)/2);
+        
         this.setVisible(true);
     }
     
