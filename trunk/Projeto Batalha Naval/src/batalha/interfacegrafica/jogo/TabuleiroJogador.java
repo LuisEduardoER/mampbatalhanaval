@@ -64,6 +64,9 @@ public class TabuleiroJogador extends JPanel{
                              HIT_NAVIO = 1,
                              HIT_PREV_HIT = 2;
 
+    private boolean handlerdesligado;
+    
+    private int naviosDestruidos = 0;
     /**
      * 
      * Construtor da classe TabuleiroJogador
@@ -92,7 +95,7 @@ public class TabuleiroJogador extends JPanel{
                     matrizLogicaDoTabuleiro[i][j] = "agua";
              }
         }
-        
+        this.handlerdesligado = false;
         this.mouseHandler = new MouseHandler();
         this.mouseMotionHandler = new MouseMotionHandler();
         addMouseListener(this.mouseHandler);
@@ -113,9 +116,13 @@ public class TabuleiroJogador extends JPanel{
      */
     public void desligarHandlers(){
             
-        removeMouseListener(this.mouseHandler);
-        removeMouseMotionListener(this.mouseMotionHandler);
-        setEnabled(false);
+        if(!handlerdesligado) {
+            removeMouseListener(this.mouseHandler);
+            removeMouseMotionListener(this.mouseMotionHandler);
+            setEnabled(false);
+            handlerdesligado = true;
+        }
+            
     }
     
     /**
@@ -123,9 +130,12 @@ public class TabuleiroJogador extends JPanel{
      */
     public void ligarHandlers(){
             
-        addMouseListener(this.mouseHandler);
-        addMouseMotionListener(this.mouseMotionHandler);
-        setEnabled(true);
+        if(handlerdesligado) {
+            addMouseListener(this.mouseHandler);
+            addMouseMotionListener(this.mouseMotionHandler);
+            setEnabled(true);
+            handlerdesligado = false;
+        }
     }
     
     /**
@@ -244,8 +254,6 @@ public class TabuleiroJogador extends JPanel{
        
         boolean check = true;
         
-       // imprimeTabuleiro();
-        
         if(areaCentral.verticalShip){
           //  System.out.println("VERTICAL\n");    
             int xInicialMatriz = (int)(x/25); 
@@ -363,7 +371,6 @@ public class TabuleiroJogador extends JPanel{
         Point p = normalizaPonto(x,y);
         x = x/25;
         y = y/25;
-        int posicao = (x * 10) + y;
         
         if(checkPosicao == HIT_AGUA){
             
@@ -378,7 +385,9 @@ public class TabuleiroJogador extends JPanel{
         } else if(checkPosicao == HIT_NAVIO){
             
             matrizLogicaDoTabuleiro[x][y] = "X";
-                
+            
+            naviosDestruidos++;
+            
             this.imagens.add(new ImagemDoTabuleiro(new ImageIcon(AreaCentral.INICIO_IMAGENS+"explodido.gif").getImage(), p));
            
             repaint();
@@ -416,6 +425,16 @@ public class TabuleiroJogador extends JPanel{
         }
         this.imagens.clear();
         repaint();
+        this.contadorPosicionamentoOk = 0;
     }
     
+    public int getNaviosDestruidos(){
+        
+        return naviosDestruidos;
+    }
+    
+    public void resetaNaviosDestruidos(){
+        
+        naviosDestruidos = 0;
+    }
 }//fim da classe TabuleiroJogador

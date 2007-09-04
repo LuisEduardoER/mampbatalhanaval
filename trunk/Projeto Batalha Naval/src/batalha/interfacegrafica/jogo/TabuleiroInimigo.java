@@ -36,13 +36,15 @@ public class TabuleiroInimigo extends JPanel {
     //Manipulador de eventos de movimento do mouse
     private MouseMotionHandler mouseMotionHandler = null;
     //Configura constantes para dizer se o jogador acertou água, navio ou se ele tentou clicar em uma posição já clicada.
-    private static final int HIT_AGUA = 0,
+    public static final int  HIT_AGUA = 0,
                              HIT_NAVIO = 1,
                              HIT_PREV_HIT = 2;
     
     //Imagem do cursor
     private Image imagemCursor = null;
-
+    //Imagem do cursor da patada
+    private Image imagemCursorPatada = null;
+    
     //Boolean que indica de quem é a vez: true = jogador e false = adversário
     protected boolean vez;
     
@@ -79,6 +81,18 @@ public class TabuleiroInimigo extends JPanel {
         this.posicaoCursor = new Point(-1,-1);
         repaint();
     }
+    
+    /**
+     * Desliga os handlers de eventos
+     */
+    public void desligar(){
+        
+        setEnabled(false);
+        removeMouseListener(this.mouseHandler);
+        removeMouseMotionListener(this.mouseMotionHandler);
+        this.posicaoCursor = new Point(-1,-1);
+        repaint();
+    }
 
     /*
      * Seta a vez
@@ -95,6 +109,11 @@ public class TabuleiroInimigo extends JPanel {
         
         this.matrizLogicaDoTabuleiro = matrizLogicaDoTabuleiro;
         
+    }
+    
+    public void setJogadaPatada(){
+        
+        imagemCursorPatada = new ImageIcon("src/imagens/cursor_patada.gif").getImage();
     }
     
     /**
@@ -122,13 +141,19 @@ public class TabuleiroInimigo extends JPanel {
         }
         
         if(posicaoCursor == null || posicaoCursor.x == -1) return;
+        
         //Percorre o array desenhando as imagens armazenadas no ArrayList
         for(ImagemDoTabuleiro i: imagens)
             g.drawImage(i.getImagem(),i.getPontoInicial().x,i.getPontoInicial().y,this);
         
+        
         Point p = normalizaPonto(posicaoCursor.x, posicaoCursor.y);
         //g2.fill3DRect(p.x,p.y,25,25,false);
-        g.drawImage(imagemCursor,p.x,p.y,this);
+        
+        if(imagemCursorPatada != null)
+            g.drawImage(imagemCursorPatada,p.x,p.y,this);
+        else
+            g.drawImage(imagemCursor,p.x,p.y,this);
     }
     
     /**
@@ -148,31 +173,62 @@ public class TabuleiroInimigo extends JPanel {
      */
     private void configuraHit(int x, int y) {
         
-        int checkPosicao = getHit(x,y);
-        Point p = normalizaPonto(x,y);
-        
-        //Errou, prayboy
-        if(checkPosicao == HIT_AGUA){
+        if(imagemCursorPatada != null){
             
-            matrizLogicaDoTabuleiro[x/25][y/25] = "Y";
-            imagens.add(new ImagemDoTabuleiro(new ImageIcon("src/imagens/splash.gif").getImage(), p));
-            Som.playAudio(Som.ERRO);
-            repaint();
-            this.vez = false;
-            return;
-            
-        //Acertou navio! Viva!    
-        } else if(checkPosicao == HIT_NAVIO){
-            
-            matrizLogicaDoTabuleiro[x/25][y/25] = "X";
-            imagens.add(new ImagemDoTabuleiro(new ImageIcon("src/imagens/explodido.gif").getImage(), p));
-            Som.playAudio(Som.ACERTO);
-            repaint();
-            return;
+           Point p = normalizaPonto(x,y);
+           
+           int pxFinal = (p.x + 100);
+           int pyFinal = (p.y + 100);
+           
+           if(pxFinal > 250) pxFinal = 250; 
+           if(pyFinal > 250) pyFinal = 250;
+           
+           
+           for(int i = p.x/25; i < pxFinal/25; i++){
+              for(int j = p.y/25; j < pyFinal/25; j++){
+                
+                  switch(getHit(i*25,j*25)){
+                    
+                      case HIT_AGUA:  matrizLogicaDoTabuleiro[i/25][j/25] = "Y"; 
+                                      imagens.add(new ImagemDoTabuleiro(new ImageIcon("src/imagens/splash.gif").getImage(), new Point(i*25,j*25)));
+                                      break;
+                      case HIT_NAVIO: matrizLogicaDoTabuleiro[i/25][j/25] = "X"; 
+                                      imagens.add(new ImagemDoTabuleiro(new ImageIcon("src/imagens/explodido.gif").getImage(), new Point(i*25,j*25)));
+                                      break;
+                  }
+              }  
+           }
+           
+           Som.playAudio(Som.PATADA);
+           imagemCursorPatada = null; //gastou a jogada
         }
-        //Se toca, cabeção! T_T    
-        else if (checkPosicao == HIT_PREV_HIT) {
-            JOptionPane.showMessageDialog(null,"Esta_ posição já foi clicada!", "Posição já escolhida",JOptionPane.INFORMATION_MESSAGE);
+        else{
+                int checkPosicao = getHit(x,y);
+                Point p = normalizaPonto(x,y);
+
+                //Errou, prayboy
+                if(checkPosicao == HIT_AGUA){
+
+                    matrizLogicaDoTabuleiro[x/25][y/25] = "Y";
+                    imagens.add(new ImagemDoTabuleiro(new ImageIcon("src/imagens/splash.gif").getImage(), p));
+                    Som.playAudio(Som.ERRO);
+                    repaint();
+                    this.vez = false;
+                    return;
+
+                //Acertou navio! Viva!    
+                } else if(checkPosicao == HIT_NAVIO){
+
+                    matrizLogicaDoTabuleiro[x/25][y/25] = "X";
+                    imagens.add(new ImagemDoTabuleiro(new ImageIcon("src/imagens/explodido.gif").getImage(), p));
+                    Som.playAudio(Som.ACERTO);
+                    repaint();
+                    return;
+                }
+                //Se toca, cabeção! T_T    
+                else if (checkPosicao == HIT_PREV_HIT) {
+                    JOptionPane.showMessageDialog(null,"Esta_ posição já foi clicada!", "Posição já escolhida",JOptionPane.INFORMATION_MESSAGE);
+                }
         }
     }
     
@@ -189,6 +245,35 @@ public class TabuleiroInimigo extends JPanel {
         return HIT_NAVIO;
     }
     
+   public int[][] getHitArea(int x, int y, int w, int h){
+    
+           Point p = normalizaPonto(x,y);
+           
+           int pxFinal = (p.x + w);
+           int pyFinal = (p.y + h);
+           
+           if(pxFinal > 250) pxFinal = 250; 
+           if(pyFinal > 250) pyFinal = 250;
+           
+           int[][] resultado = new int[10][10];
+           
+           for(int i = 0; i < 100; i++) resultado[i/10][i%10] = -1;
+           
+           for(int i = p.x/25; i < pxFinal/25; i++){
+              for(int j = p.y/25; j < pyFinal/25; j++){
+                
+                  switch(getHit(i*25,j*25)){
+                    
+                      case HIT_AGUA:  resultado[i][j] = HIT_AGUA;
+                                      break;
+                      case HIT_NAVIO: resultado[i][j] = HIT_NAVIO;
+                                      break;
+                  }
+              }  
+           }
+           
+           return resultado;
+   } 
     /**
      * MouseHandler.java
      *
@@ -244,6 +329,7 @@ public class TabuleiroInimigo extends JPanel {
     public void limpaImagens() {
     
         this.imagens.clear();
+        desligar();
         repaint();
     }
 }

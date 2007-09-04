@@ -9,7 +9,7 @@
 package batalha.interfacegrafica;
 
 import batalha.interfacegrafica.jogo.*;
-import batalha.rede.GerenciadorJogo;
+import batalha.gerencia.GerenciadorJogo;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -37,6 +37,9 @@ import java.awt.event.*;
  *
  * @date 03/09/2007
  * @version 0.7
+ *
+ * @date 04/09/2007
+ * @version 0.8
  */
 public class PainelDoJogo extends javax.swing.JPanel {
     
@@ -49,7 +52,7 @@ public class PainelDoJogo extends javax.swing.JPanel {
      * tutorial do SpringLayout na classe DadosRede, deixo aqui o link para o tutorial do BoxLayout da Sun: 
      * http://java.sun.com/docs/books/tutorial/uiswing/layout/box.html
      */
-    
+   
     //Label para mostrar de quem é a vez
     private JLabel lbVez, 
                    lbPontuacao;
@@ -60,8 +63,6 @@ public class PainelDoJogo extends javax.swing.JPanel {
     private AreaCentral areaCentral;
     //Botão para enviar mensagem
     private JButton btEnviarMensagem;
-    //Botão da patada do gato (NÃO DEIXEI NA INTERFACE).
-    private JButton btPoderEspecial;
     //Área de texto para o chat
     private JTextArea txaChat;
     //Exibe a área de texto em um campo
@@ -71,7 +72,7 @@ public class PainelDoJogo extends javax.swing.JPanel {
     //Tabuleiro do inimigo
     private TabuleiroInimigo tabuleiroInimigo;
     //Painel com o logo
-    private JPanel jpLogo;
+    private PainelCentral painelCentral;
     //Apelido 
     private String apelidoJogador;
     //IP
@@ -87,31 +88,49 @@ public class PainelDoJogo extends javax.swing.JPanel {
     private boolean vez;
     //inteiro que armazena a pontuação do jogador
     private int pontos;
+    //Item de menu para sair do jogo e criar novo jogo
+    private JMenuItem menuSair;
+    private JMenuItem novoJogo;
     
     /** 
      * Construtor da classe PainelDoJogo
      */
-    
-    public PainelDoJogo() {
-        
+    public PainelDoJogo( JMenuItem sair, JMenuItem novo ) {
+        menuSair = sair;   
+        novoJogo = novo;
         initComponents();
     }
+                               
     
     /****************************************************************************************/
     //seta o apelido que o jogador entrar, este metodo é chamado na classe BatalhaNavalWindow
     void setNick(String apelido){
         apelidoJogador = apelido;        
     }
-    
-    //seta o Ip que o jogador entrar sendo este metodo chamado na classe BatalhaNavalWindow
-    void setIp(String ip ){
-        Ip = ip;
-    }
+             
     
     //retorna o apelido 
     public String  getNick(){
       return  apelidoJogador;
     }
+    
+     //seta o boolean que indica se o objeto eh servidor ou cliente
+    public void setServidor(boolean ser) {
+        
+        this.Servidor = ser;
+    }
+
+    //retorna o boolean que indica se o objeto eh servidor ou nao
+    public boolean getServidor() {
+    
+        return this.Servidor;
+    }
+    
+    
+    //seta o Ip que o jogador entrar sendo este metodo chamado na classe BatalhaNavalWindow
+    void setIp(String ip ){
+        Ip = ip;
+    }     
     
     //retorna o Ip
     public String getIp(){
@@ -124,18 +143,7 @@ public class PainelDoJogo extends javax.swing.JPanel {
         return this.txfMensagem;
     }
     
-    //seta o boolean que indica se o objeto eh servidor ou cliente
-    public void setServidor(boolean ser) {
-        
-        this.Servidor = ser;
-    }
-
-    //retorna o boolean que indica se o objeto eh servidor ou nao
-    public boolean getServidor() {
-    
-        return this.Servidor;
-    }
-    
+   
     //retorna o botão enviar mensagem
     public JButton getBtEnviarMensagem() {
     
@@ -199,6 +207,15 @@ public class PainelDoJogo extends javax.swing.JPanel {
         return this.vez;
     }
     
+    //para pegar o Evento do BatalhaNavalWindows...
+    public JMenuItem getSaida(){
+        return this.menuSair;
+    }
+    
+    public JMenuItem getNovoJogo(){
+        return this.novoJogo;
+    }
+    
     //acrescenta 1 ao número de pontos do jogador
     public void somaPontuacao() {
         
@@ -224,6 +241,21 @@ public class PainelDoJogo extends javax.swing.JPanel {
         
         this.pontos = -1;
     }
+    
+    public JButton getBotaoPatada(){
+        
+        return painelCentral.getBotaoPatada();
+    }
+    
+    public PainelCentral getPainelCentral(){
+        
+        return painelCentral;
+    }
+    
+    public TabuleiroJogador getMeuTabuleiro(){
+        
+        return meuTabuleiro;
+    }
     /****************************************************************************************/
     
     /**
@@ -234,13 +266,13 @@ public class PainelDoJogo extends javax.swing.JPanel {
         //Primeiro configuramos o gerenciador de layout para BorderLayout. Este gerenciador é muito simples, e permite que os containeres
         //sejam adicionados em 5 partes: norte, sul, leste, oeste e centro. Para quem quiser saber mais sobre o BorderLayout,
         //http://java.sun.com/docs/books/tutorial/uiswing/layout/border.html
-        this.setLayout(new BorderLayout());
+        this.setLayout(new BorderLayout());        
         
         //Instancia os objetos
         tabuleiroInimigo = new TabuleiroInimigo();
         txaChat = new javax.swing.JTextArea();
-        jpLogo = new javax.swing.JPanel();
-        btPoderEspecial = new javax.swing.JButton();
+        painelCentral = new PainelCentral();
+
         btEnviarMensagem = new javax.swing.JButton();
         
         areaCentral = new AreaCentral(tabuleiroInimigo);
@@ -278,17 +310,13 @@ public class PainelDoJogo extends javax.swing.JPanel {
         Box box1CimaY = Box.createVerticalBox(); Box box2CimaY = Box.createVerticalBox();
         
         //Criamos uma box para adicionar o painel do jogo. Está apenas em amarelo agora
-        Box boxLogo = Box.createVerticalBox();
-        jpLogo.setPreferredSize(new Dimension(80,230));
-        jpLogo.setBackground(Color.YELLOW);
-        
+        Box boxLogo = Box.createVerticalBox();        
         //Dimensões para adicionar o painel com o logo
         Dimension distLogoCima = new Dimension(80,20);
         Dimension distLogoBaixo = new Dimension(80,10);
-        
         //Colocamos uma distância, empacotamos o logo, e depois colocamos outra distância
         boxLogo.add(new Box.Filler(distLogoCima,distLogoCima,distLogoCima));
-        boxLogo.add(jpLogo);        
+        boxLogo.add(painelCentral);
         boxLogo.add(new Box.Filler(distLogoBaixo,distLogoBaixo,distLogoBaixo));
         
         //Dimensões padrão para distanciamento, necessário para Box.Filler
@@ -539,5 +567,6 @@ public class PainelDoJogo extends javax.swing.JPanel {
         this.meuTabuleiro.limpaMatriz();
         this.meuTabuleiro.limpaImagens();
         this.meuTabuleiro.ligarHandlers();
-    }
+        this.meuTabuleiro.resetaNaviosDestruidos();
+    }  
 }

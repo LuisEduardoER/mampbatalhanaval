@@ -7,8 +7,8 @@
 
 package batalha.interfacegrafica;
 
+import batalha.gerencia.GerenciadorJogo;
 import batalha.interfacegrafica.jogo.*;
-import batalha.rede.*;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import javax.swing.*;
@@ -66,8 +66,14 @@ public class BatalhaNavalWindow extends JFrame{
     //Painel do Jogo
     private PainelDoJogo painel = null;
     //Conexao e Logica do Jogo 
-    
     private Thread jogo;
+    //para verificar se o jogo ja foi criado
+    private boolean jogoCriado = false;
+    //para o Menu    
+    private JMenuBar barramenu;
+    private JMenu mnuJogo;
+    private JMenuItem mnuNovoJogo;
+    private JMenuItem mnuSair;
 
     /**
      * Construtor da classe BatalhaNavalWindow
@@ -75,7 +81,7 @@ public class BatalhaNavalWindow extends JFrame{
     public BatalhaNavalWindow() {
         
         configuraFrame();
-//        configuraBarraDeMenu();
+       
     }
     
     private void configuraFrame() {
@@ -85,11 +91,50 @@ public class BatalhaNavalWindow extends JFrame{
             Thread.sleep( 9010 ); 
         } catch (InterruptedException ex) {
             ex.printStackTrace();
-        }
+        }        
         
+        final ImageIcon image = new ImageIcon("src/imagens/gato.gif"); //poe um novo simbolo no lugar do simbolo do java
+        setIconImage(image.getImage()); //no frame 
+         
+        barramenu = new JMenuBar(); //para criar a barra onde ficara os menus
+	mnuJogo = new JMenu("Jogo");//um menu sera CADASTAR
+ 	mnuJogo.setMnemonic('J');
+                
+       //os itens do menu jogo
+        mnuNovoJogo = new JMenuItem("Novo Jogo");
+        mnuNovoJogo.setMnemonic('N');        
+        //cria a tecla de atalho F2 para novo jogo
+        KeyStroke F2 = KeyStroke.getKeyStroke("F2");
+        mnuNovoJogo.setAccelerator( F2 );                   
+                
+        mnuSair = new JMenuItem("Fechar");
+        mnuSair.setMnemonic('S'); //quando pressionado Alt + F4 sai..
+        //cria a tecla de atalho Alt + F4 para sair
+        KeyStroke altF4 = KeyStroke.getKeyStroke("alt F4");
+        mnuSair.setAccelerator(altF4);  
+        
+         //chama o metodo Listener para fechar o programa
+        
+        mnuSair.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+                    if(!jogoCriado){
+                       System.exit( 0 );
+                    }  
+         }
+        });
+        
+        mnuJogo.add(mnuNovoJogo);              
+        mnuJogo.addSeparator();
+        mnuJogo.add(mnuSair);
+        
+              
+        barramenu.add( mnuJogo );      //add a barra o Menu Processo  
+        this.setJMenuBar(barramenu);
+         
+         /**********************************************************************************/
         //Container inicial
         cInicial = new Container();
-        painel = new PainelDoJogo();
+        painel = new PainelDoJogo( this.mnuSair, this.mnuNovoJogo );
         
         //Configura layout do container
         layoutContainer = new SpringLayout();
@@ -132,6 +177,7 @@ public class BatalhaNavalWindow extends JFrame{
         jrbServidor.addItemListener(bgHandler);
         jrbCliente.addItemListener(bgHandler);
         jrbServidor.setSelected(true);
+       
         //Grupo de botão para organizar logicamente os radio buttons
         bgOpcao = new ButtonGroup();
         bgOpcao.add(jrbServidor);
@@ -156,6 +202,8 @@ public class BatalhaNavalWindow extends JFrame{
 
         //Configura o layout do container
         configuraLayout();
+        
+        
         
         this.pack();
         this.setResizable(false);
@@ -195,6 +243,8 @@ public class BatalhaNavalWindow extends JFrame{
         layoutContainer.putConstraint(SpringLayout.NORTH, botaoOk, 55, SpringLayout.SOUTH, txfNovoIP);
         layoutContainer.putConstraint(SpringLayout.WEST, botaoOk, 5, SpringLayout.WEST, chbNovoIP);
     }
+    
+  
     
     /**
      * Inicializa a combo box com os IPs. Este método pode lançar uma excessão se o arquivo não for encontrado.
@@ -367,8 +417,10 @@ public class BatalhaNavalWindow extends JFrame{
                 painel.setIp( (String) cbIPs.getSelectedItem() );
             }
             
+            //funcao do Painel do jogo
             painel.setServidor(isServidor);
             painel.setVisible(true);
+            jogoCriado = true;
 
             //Configura  a thread de jogo e inicializa
             jogo = new GerenciadorJogo(painel);
@@ -377,8 +429,23 @@ public class BatalhaNavalWindow extends JFrame{
             BatalhaNavalWindow.this.pack();
             SwingUtilities.updateComponentTreeUI(BatalhaNavalWindow.this);
             Som.playAudio(Som.SOM_CONFIG);
+            
+            //verifica se o jogador é servidor ou cliente...e logo em seguida
+            //seta o titulo, com cliente ou servidor mas o Nick 
+            if(painel.getServidor())
+                setTitle("Servidor - " + painel.getNick() );
+            else setTitle("Cliente - " + painel.getNick() );
+            
             jogo.start(); 
         }
+    }
+    
+    public JMenuItem getNovoJogo(){
+     return this.mnuNovoJogo;
+    }
+    
+    public JMenuItem getSair(){
+        return this.mnuSair;
     }
         
 }
