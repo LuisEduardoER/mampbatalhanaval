@@ -21,7 +21,16 @@ public class MainBatalhaNaval {
 
         public static void main(String args[]){
              
-            Som.playAudio(Som.BEM_VINDO);
+            // Cria um objeto do Tipo Splash
+            Splash splash = new Splash();
+                
+            //cria Splash...e depois de 9 segundos inicia o simulador...
+            splash.criaSplash("batalha.jpg","Inicializando MAMP&R Batalha Naval . . .");
+        
+            Som.playAudio(Som.BEM_VINDO); //som de boas vindas...
+            
+            //invoca a janela de definicoes de Nick, se sera cliente ou servidor juntamente
+            //com o Ip para  conexao 
             BatalhaNavalWindow jogo = new BatalhaNavalWindow();
         } 
 }
