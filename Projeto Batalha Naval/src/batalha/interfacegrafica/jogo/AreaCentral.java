@@ -186,7 +186,6 @@ public class AreaCentral extends JPanel{
         
         //inicialmente não existe conexão
         this.conectado = false;
-
     }
     
     /*
@@ -278,4 +277,14 @@ public class AreaCentral extends JPanel{
             }
         }
    }
+    
+    //exibe o painel que contém os navios
+    public void mostraNavios() {
+
+        for(int i = 0; i < 5; i++){
+            containerDosNavios[i].setEnabled(true);
+        }
+        dadosRede.setVisible(false);
+        painelConteudoNavios.setVisible(true);
+    }
 }

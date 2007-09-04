@@ -119,6 +119,16 @@ public class TabuleiroJogador extends JPanel{
     }
     
     /**
+     * Adiciona o listener de evento do mouse, caso seja necessário reconfigurar o tabuleiro
+     */
+    public void ligarHandlers(){
+            
+        addMouseListener(this.mouseHandler);
+        addMouseMotionListener(this.mouseMotionHandler);
+        setEnabled(true);
+    }
+    
+    /**
      * Método que desenha o tabuleiro
      */
     protected void paintComponent(Graphics g){
@@ -157,9 +167,6 @@ public class TabuleiroJogador extends JPanel{
        
        if(areaCentral.imagemUltimoNavio == null ) return; 
        Point p = normalizaPonto(posicaoCursor.x, posicaoCursor.y);
-
-       //System.out.println("Ponto p: "+p.getX()+","+p.getY());
-       //System.out.println("Ponto p: "+p.x+","+p.y);
 
        if (areaCentral.verticalShip) g2.fill3DRect(p.x,
                  p.y, 25, areaCentral.larguraUltimoNavio, false);
@@ -257,15 +264,12 @@ public class TabuleiroJogador extends JPanel{
                    matrizLogicaDoTabuleiro[xInicialMatriz][i] = nomeDoNavio; 
             }
             
-        //    imprimeTabuleiro();
             return true;
         }
         
-       // System.out.println("HORIZONTAL\n");
         int xInicialMatriz = (int)(x/25);
         int yInicialMatriz = (int)(y/25);
         int xFinalMatriz = (int)((x+larguraNavio)/25);
-        //System.out.println("X inicial: "+xInicialMatriz+", Y Inicial: "+yInicialMatriz+", X Final: "+xFinalMatriz);
         
         if(xInicialMatriz + (xFinalMatriz - xInicialMatriz) -1 > 9) return false;
         
@@ -276,24 +280,9 @@ public class TabuleiroJogador extends JPanel{
         for(int i = xInicialMatriz; i < xFinalMatriz; i++){
             matrizLogicaDoTabuleiro[i][yInicialMatriz] = nomeDoNavio;
         }
-       // System.out.println("\n\n");
-    //    imprimeTabuleiro();
         return true;
     }
 
-    private void imprimeTabuleiro(){
-        
-        for(int i = 0; i < 10; i++){
-           for(int j = 0; j < 10; j++){
-                System.out.print(i+","+j+"= "+matrizLogicaDoTabuleiro[i][j]);
-                System.out.print("\t");
-           }
-           System.out.println("");
-        }
-        
-        System.out.println("\n\n");
-    }
-    
     /**
      * MouseHandler.java
      *
@@ -368,7 +357,6 @@ public class TabuleiroJogador extends JPanel{
         }
     }
  
-    //teste
     public void configuraHit(int x, int y) {
         
         int checkPosicao = getHit(x,y);
@@ -377,7 +365,6 @@ public class TabuleiroJogador extends JPanel{
         y = y/25;
         int posicao = (x * 10) + y;
         
-        System.out.println("\nPosicao da matriz de imagens:" + posicao);
         if(checkPosicao == HIT_AGUA){
             
             matrizLogicaDoTabuleiro[x][y] = "Y";
@@ -410,6 +397,25 @@ public class TabuleiroJogador extends JPanel{
                 return HIT_PREV_HIT;
         
         return HIT_NAVIO;
+    }
+     
+    //limpa a matriz
+    public void limpaMatriz() {
+        
+        for(int i=0;i<10;i++){
+            for(int j=0;j<10;j++) {
+                this.matrizLogicaDoTabuleiro[i][j] = "agua";
+            }
+        }
+    }
+    
+    //limpa as imagens do tabuleiro
+    public void limpaImagens() {
+        for(int i=0;i<imagensDoTabuleiro.length;i++){
+            this.imagensDoTabuleiro[i] = null;
+        }
+        this.imagens.clear();
+        repaint();
     }
     
 }//fim da classe TabuleiroJogador

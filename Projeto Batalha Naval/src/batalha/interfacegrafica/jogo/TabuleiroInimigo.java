@@ -122,7 +122,6 @@ public class TabuleiroInimigo extends JPanel {
         }
         
         if(posicaoCursor == null || posicaoCursor.x == -1) return;
-        
         //Percorre o array desenhando as imagens armazenadas no ArrayList
         for(ImagemDoTabuleiro i: imagens)
             g.drawImage(i.getImagem(),i.getPontoInicial().x,i.getPontoInicial().y,this);
@@ -160,7 +159,7 @@ public class TabuleiroInimigo extends JPanel {
             Som.playAudio(Som.ERRO);
             repaint();
             this.vez = false;
-           
+            return;
             
         //Acertou navio! Viva!    
         } else if(checkPosicao == HIT_NAVIO){
@@ -169,11 +168,11 @@ public class TabuleiroInimigo extends JPanel {
             imagens.add(new ImagemDoTabuleiro(new ImageIcon("src/imagens/explodido.gif").getImage(), p));
             Som.playAudio(Som.ACERTO);
             repaint();
-        
+            return;
+        }
         //Se toca, cabeção! T_T    
-        } else{
-            
-            JOptionPane.showMessageDialog(null,"Esta posição já foi clicada!", "Posição já escolhida",JOptionPane.INFORMATION_MESSAGE);
+        else if (checkPosicao == HIT_PREV_HIT) {
+            JOptionPane.showMessageDialog(null,"Esta_ posição já foi clicada!", "Posição já escolhida",JOptionPane.INFORMATION_MESSAGE);
         }
     }
     
@@ -230,5 +229,21 @@ public class TabuleiroInimigo extends JPanel {
         
         return this;
     }
-
+    
+    //limpa a matriz logica do tabuleiro
+    public void limpaMatriz() {
+        
+        for(int i=0;i<10;i++){
+            for(int j=0;j<10;j++) {
+                this.matrizLogicaDoTabuleiro[i][j] = "agua";
+            }
+        }
+    }
+    
+    //limpa as imagens do tabuleiro
+    public void limpaImagens() {
+    
+        this.imagens.clear();
+        repaint();
+    }
 }

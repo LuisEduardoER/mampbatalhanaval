@@ -13,7 +13,6 @@ import batalha.interfacegrafica.jogo.AreaCentral;
 import batalha.interfacegrafica.PainelDoJogo;
 import batalha.interfacegrafica.jogo.Som;
 
-
 import java.io.*;
 import java.net.*;
 import java.awt.*;
@@ -55,8 +54,10 @@ public class GerenciadorJogo extends Thread {
     painel.getBtEnviarMensagem().addActionListener(
             new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    EnviaDado(painel.getTextoMensagem(), "Chat");
-                    painel.limpaTexto();
+                   // EnviaDado(painel.getTextoMensagem(), "Chat");
+                   // painel.limpaTexto();
+                    EnviaDado("*","Jogada");
+                    ReinciaJogo();
                 }
         }
     );
@@ -260,8 +261,11 @@ public class GerenciadorJogo extends Thread {
              String pacote = msg.substring(0,1);
              if(pacote.equals("@")) {
                 painel.atualizaChat(msg.substring(1) + "\n");
-                                 
              } 
+             else if(pacote.equals("*")) {
+                ReinciaJogo();
+             } 
+
              else if(pacote.equals("#")){
                  //entrar nesse if significa que o adversário configurou seu tabuleiro
                  String[][] matriz = new String[10][10];
@@ -342,4 +346,14 @@ public class GerenciadorJogo extends Thread {
      conexao.close(); //e a conexao...
   }
  
+ private void ReinciaJogo(){
+     
+     painel.limpaPainel();
+     painel.zeraPontos();
+     painel.somaPontuacao();
+     painel.setVez(false);
+     painel.getTabuleiroInimigo().setVez(false);
+     painel.setJogadorPronto(false);
+     
+ }
 }
