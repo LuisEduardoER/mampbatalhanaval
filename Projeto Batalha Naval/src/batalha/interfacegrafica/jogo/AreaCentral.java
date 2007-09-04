@@ -233,6 +233,14 @@ public class AreaCentral extends JPanel{
         botaoValidaPosicionamento.setEnabled(true);
     }
     
+    /*
+     * Desabilita o botão OK quando o jogo é reiniciado
+     */
+    public void desabilitaBotaoOk() {
+        
+         botaoValidaPosicionamento.setEnabled(false);
+        
+    }
     
     /**
      * Handler de evento de clique sobre um botão.
@@ -285,6 +293,7 @@ public class AreaCentral extends JPanel{
             containerDosNavios[i].setEnabled(true);
         }
         dadosRede.setVisible(false);
+        desabilitaBotaoOk();
         painelConteudoNavios.setVisible(true);
     }
 }
