@@ -218,6 +218,12 @@ public class PainelDoJogo extends javax.swing.JPanel {
         
         return this.pontos;
     }
+    
+    //zera a pontuação
+    public void zeraPontos() {
+        
+        this.pontos = -1;
+    }
     /****************************************************************************************/
     
     /**
@@ -522,5 +528,16 @@ public class PainelDoJogo extends javax.swing.JPanel {
     //envia as coordenadas da jogada do adversário para serem pintadas no tabuleiro do jogador
     public void configuraHit(int x, int y) {
         this.meuTabuleiro.configuraHit(x,y);
+    }
+    
+    //limpa painel para resetar o jogo
+    public void limpaPainel() {
+        
+        this.areaCentral.mostraNavios();
+        this.tabuleiroInimigo.limpaImagens();
+        this.tabuleiroInimigo.limpaMatriz();
+        this.meuTabuleiro.limpaMatriz();
+        this.meuTabuleiro.limpaImagens();
+        this.meuTabuleiro.ligarHandlers();
     }
 }
