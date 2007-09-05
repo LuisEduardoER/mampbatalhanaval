@@ -88,7 +88,7 @@ public class PainelDoJogo extends javax.swing.JPanel {
     private boolean vez;
     //inteiro que armazena a pontuação do jogador
     private int pontos;
-    //Item de menu para sair do jogo e criar novo jogo
+    //Itens de menu para sair do jogo e criar novo jogo
     private JMenuItem menuSair;
     private JMenuItem novoJogo;
     
@@ -101,13 +101,11 @@ public class PainelDoJogo extends javax.swing.JPanel {
         initComponents();
     }
                                
-    
     /****************************************************************************************/
     //seta o apelido que o jogador entrar, este metodo é chamado na classe BatalhaNavalWindow
     void setNick(String apelido){
         apelidoJogador = apelido;        
     }
-             
     
     //retorna o apelido 
     public String  getNick(){
@@ -143,7 +141,6 @@ public class PainelDoJogo extends javax.swing.JPanel {
         return this.txfMensagem;
     }
     
-   
     //retorna o botão enviar mensagem
     public JButton getBtEnviarMensagem() {
     
@@ -568,5 +565,6 @@ public class PainelDoJogo extends javax.swing.JPanel {
         this.meuTabuleiro.limpaImagens();
         this.meuTabuleiro.ligarHandlers();
         this.meuTabuleiro.resetaNaviosDestruidos();
+        this.painelCentral.desabilitaPatada();
     }  
 }

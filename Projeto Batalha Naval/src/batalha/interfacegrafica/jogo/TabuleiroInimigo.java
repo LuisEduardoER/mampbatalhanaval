@@ -42,6 +42,7 @@ public class TabuleiroInimigo extends JPanel {
     
     //Imagem do cursor
     private Image imagemCursor = null;
+    
     //Imagem do cursor da patada
     private Image imagemCursorPatada = null;
     
@@ -227,7 +228,7 @@ public class TabuleiroInimigo extends JPanel {
                 }
                 //Se toca, cabeção! T_T    
                 else if (checkPosicao == HIT_PREV_HIT) {
-                    JOptionPane.showMessageDialog(null,"Esta_ posição já foi clicada!", "Posição já escolhida",JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null,"Esta posição já foi clicada!", "Posição já escolhida",JOptionPane.INFORMATION_MESSAGE);
                 }
         }
     }
