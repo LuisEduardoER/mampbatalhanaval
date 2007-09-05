@@ -565,6 +565,6 @@ public class PainelDoJogo extends javax.swing.JPanel {
         this.meuTabuleiro.limpaImagens();
         this.meuTabuleiro.ligarHandlers();
         this.meuTabuleiro.resetaNaviosDestruidos();
-        this.painelCentral.desabilitaPatada();
+        this.painelCentral.resetaPatada();
     }  
 }
