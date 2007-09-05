@@ -41,8 +41,7 @@ public class TabuleiroInimigo extends JPanel {
                              HIT_PREV_HIT = 2;
     
     //Imagem do cursor
-    private Image imagemCursor = null;
-    
+    private Image imagemCursor = null;    
     //Imagem do cursor da patada
     private Image imagemCursorPatada = null;
     

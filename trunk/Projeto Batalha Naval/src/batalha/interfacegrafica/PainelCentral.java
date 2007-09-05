@@ -89,4 +89,9 @@ public class PainelCentral extends JPanel{
         
         return btPoderEspecial;
     }
+    
+    public void resetaPatada(){
+        
+        foiClickado = false;
+    }
 }
