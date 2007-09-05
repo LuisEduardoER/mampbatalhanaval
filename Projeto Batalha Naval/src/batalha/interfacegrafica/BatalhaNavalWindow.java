@@ -1,4 +1,4 @@
-/*
+     /*
  * BatalhaNavalWindow.java
  *
  * Criado em 25 de Agosto de 2007, 15:17
@@ -74,7 +74,11 @@ public class BatalhaNavalWindow extends JFrame{
     private JMenu mnuJogo;
     private JMenuItem mnuNovoJogo;
     private JMenuItem mnuSair;
-
+    private JMenu mnuAjuda;
+    private JMenuItem mnuComoUsar;
+    private JMenu mnuCredito;
+    private JMenuItem mnuSobre;
+    
     /**
      * Construtor da classe BatalhaNavalWindow
      */
@@ -88,14 +92,18 @@ public class BatalhaNavalWindow extends JFrame{
         
          try {                  
             //para o Splash...espera 9 segundos e pokinhu... para criar a janela principal...
-            Thread.sleep( 9010 ); 
+            Thread.sleep( 9000 ); 
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }        
         
+        Som.playAudio(Som.BEM_VINDO); //som de boas vindas...
+         
         final ImageIcon image = new ImageIcon("src/imagens/gato.gif"); //poe um novo simbolo no lugar do simbolo do java
         setIconImage(image.getImage()); //no frame 
-         
+     
+  /************************************* BARRA DE MENUS **************************************/  
+  
         barramenu = new JMenuBar(); //para criar a barra onde ficara os menus
 	mnuJogo = new JMenu("Jogo");//um menu sera CADASTAR
  	mnuJogo.setMnemonic('J');
@@ -113,8 +121,43 @@ public class BatalhaNavalWindow extends JFrame{
         KeyStroke altF4 = KeyStroke.getKeyStroke("alt F4");
         mnuSair.setAccelerator(altF4);  
         
-         //chama o metodo Listener para fechar o programa
+        //cria outro menu que é Ajuda
+        mnuAjuda = new JMenu("Ajuda");
+        mnuAjuda.setMnemonic('A');
+        //os itens do menu Ajuda
+        mnuComoUsar = new JMenuItem("como jogar...");
+        mnuComoUsar.setMnemonic('C');
+        //cria um atalho para ajuda quando pressionado a tecla F1
+        KeyStroke ajudaF1 = KeyStroke.getKeyStroke("F1");
+        mnuComoUsar.setAccelerator( ajudaF1 );
         
+        //novo Menu, para exibir Créditos
+        mnuCredito = new JMenu("Creditos");//um menu sera CADASTAR 	
+        mnuCredito.setMnemonic('C'); 
+        
+        //sera um item do Menu Creditos
+        mnuSobre = new JMenuItem("Sobre");
+        mnuSobre.setMnemonic('S');
+        
+        mnuCredito.add( mnuSobre );
+        
+        mnuJogo.add(mnuNovoJogo);              
+        mnuJogo.addSeparator();
+        mnuJogo.add( mnuSair );
+        
+        mnuAjuda.add( mnuComoUsar ); 
+        
+        mnuCredito.add( mnuCredito );
+              
+        barramenu.add( mnuJogo );      //add a barra o Menu Processo  
+        barramenu.add( mnuAjuda );    //add a barra o Menu Ajuda
+        barramenu.add( mnuCredito );
+        
+        this.setJMenuBar(barramenu);
+         
+       /********************************** LISTENER DOS MENUS *************************************/
+         
+        //QUANDO pressionado ALt + F4 fecha o joogo
         mnuSair.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
                     if(!jogoCriado){
@@ -123,15 +166,46 @@ public class BatalhaNavalWindow extends JFrame{
          }
         });
         
-        mnuJogo.add(mnuNovoJogo);              
-        mnuJogo.addSeparator();
-        mnuJogo.add(mnuSair);
-        
+        mnuSobre.addActionListener( new ActionListener() {  
+           public void actionPerformed(ActionEvent event)  
+           {  
+             
+              new Credito(); //chama o construtor da classe Credito      
+           }  
               
-        barramenu.add( mnuJogo );      //add a barra o Menu Processo  
-        this.setJMenuBar(barramenu);
-         
-         /**********************************************************************************/
+          }                              
+         );  
+            
+          mnuComoUsar.addActionListener( new ActionListener() {  
+             public void actionPerformed(ActionEvent event)  
+                {  
+                   
+               
+                 //  image = new ImageIcon( loader.getResource(APPLICATION_ICON_URL)); //poe um novo simbolo no lugar do simbolo do java
+               
+                   JOptionPane novo = new JOptionPane();
+                    novo.showMessageDialog(null,"\n\t\t                                   MAMP&R - Batalha Naval 1.0\n\n" 
+                    +"1 - Inicie o jogo colocando seu Nick, e escolhendo entre cliente e servidor\n"  
+                    +"2 - Caso escolhido servidor, clique no botão  - Ok Estou Pronto!\n"  
+                    +"3 - Caso escolhido cliente, selecione o Ip do servidor," +
+                    "\n     se desejar adicionar novo Ip habilite o checkbox e insira o novo Ip e aperte o botão - Ok Estou Pronto!\n"  
+                    +"4 - Posicione suas peças no tabuleiro da esquerda e aperte OK\n" 
+                    +"5 - O jogador que pressionar primeiro o botão OK será o primeiro a jogar\n" 
+                    +"6 - As vezes entre os jogadores vão se alternando enquanto acertar as peças\n" +
+                            " do adversário, se acertar água a vez é passado para outro jogador\n"
+                    +"7 - O jogo termina quando as 18 peças de um jogador forem destruidas\n"
+                    +"8 - Caso deseja jogar novamente aperte F2\n\n"         
+                            +"\t\t\t\t                         BOA DIVERSÃO\n\n" 
+                    
+                    +"\t\t\t                                        © 2007 MAMP&R\n\n ","Como Jogar",
+                      JOptionPane.WARNING_MESSAGE,image);
+                    
+                  }  
+               }  
+            ); 
+        
+        /******************************************************************************************/
+       
         //Container inicial
         cInicial = new Container();
         painel = new PainelDoJogo( this.mnuSair, this.mnuNovoJogo );

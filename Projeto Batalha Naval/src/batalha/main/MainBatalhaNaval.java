@@ -25,9 +25,7 @@ public class MainBatalhaNaval {
             Splash splash = new Splash();
                 
             //cria Splash...e depois de 9 segundos inicia o simulador...
-            splash.criaSplash("src/imagens/batalha.jpg","Inicializando MAMP&R Batalha Naval . . .");
-        
-            Som.playAudio(Som.BEM_VINDO); //som de boas vindas...
+            splash.criaSplash("src/imagens/batalha.jpg","Inicializando MAMP&R Batalha Naval . . .");                                        
             
             //invoca a janela de definicoes de Nick, se sera cliente ou servidor juntamente
             //com o Ip para  conexao 
