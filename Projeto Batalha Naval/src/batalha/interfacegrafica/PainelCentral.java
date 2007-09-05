@@ -64,7 +64,7 @@ public class PainelCentral extends JPanel{
             new Runnable(){
                 public void run(){
                     
-                    btPoderEspecial.setEnabled(true);
+                    if(!foiClickado) btPoderEspecial.setEnabled(true);
                 }
             }
         );
@@ -79,6 +79,7 @@ public class PainelCentral extends JPanel{
         
         btPoderEspecial.setEnabled(false);
     }
+    
     public void setBotaoClickado(){
         
         foiClickado = true;

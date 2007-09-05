@@ -10,7 +10,6 @@ package batalha.interfacegrafica;
 import batalha.gerencia.GerenciadorJogo;
 import batalha.interfacegrafica.jogo.*;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 import javax.swing.*;
 import java.net.*;
 import java.io.*;
