@@ -3,8 +3,8 @@
  *
  * Created on 3 de Setembro de 2007, 20:44
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * Esta classe criara o Splash de inicializacao do Jogo
+ * 
  */
 
 package batalha.interfacegrafica;
