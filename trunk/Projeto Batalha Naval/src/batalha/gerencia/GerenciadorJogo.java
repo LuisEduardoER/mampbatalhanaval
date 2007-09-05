@@ -90,26 +90,24 @@ public class GerenciadorJogo extends Thread {
                 
                 if(painel.getPainelCentral().ehJogadaPatada()){
                 
-                    System.out.println("\n\n\n… jogada patada!\n\n\n");
-
-                    
                     int resultado[][] = painel.getTabuleiroInimigo().getHitArea(me.getX(),me.getY(),100,100);
                     
                     for(int i = 0; i < resultado.length; i++){
                         for(int j = 0; j < resultado[0].length; j++){
                                                     
                             if(resultado[i][j] == -1) continue;
-                            if(resultado[i][j] == HIT_AGUA) EnviaDado("X","Jogada");
-                            else{
+                            String msg = new String();
+                            msg = msg + "!";
+                            msg = msg + (i * 25);
+                            msg = msg + ",";
+                            msg = msg + (j * 25);
+                            msg = msg + ",";
+                            painel.getAreaCentral().getDadosDaRede().addDadoEnviado( msg );
+                            EnviaDado(msg, "Jogada");
+
+                            //acertou um navio
+                            if(resultado[i][j] == HIT_NAVIO) {
                                 painel.somaPontuacao();
-                                String msg = new String();
-                                msg = msg + "!";
-                                msg = msg + (i * 25);
-                                msg = msg + ",";
-                                msg = msg + (j * 25);
-                                msg = msg + ",";
-                                painel.getAreaCentral().getDadosDaRede().addDadoEnviado( msg );
-                                EnviaDado(msg, "Jogada");
                                 //o jogo acaba quando o jogador faz 18 pontos
                                 if(painel.getPontos() == 18) {
                                     //envia derrota para o advers·rio
@@ -120,13 +118,12 @@ public class GerenciadorJogo extends Thread {
                                     //reinicia o jogo
                                     EnviaDado("*","Jogada");
                                     ReinciaJogo();
-
                                 }
                             }
                         }
                     }
-                    
                     painel.getPainelCentral().desabilitaPatada();
+                    EnviaDado("X", "Jogada");
                     painel.setVez(false);
                     
                 } else{
@@ -159,7 +156,6 @@ public class GerenciadorJogo extends Thread {
                             //reinicia o jogo
                             EnviaDado("*","Jogada");
                             ReinciaJogo();
-                            
                         }
                     }
                 }
@@ -226,9 +222,11 @@ public class GerenciadorJogo extends Thread {
          if(origem == null) return;
          
          if(origem.equals("Chat")) {
-             painel.atualizaChat(painel.getNick()+ " diz: " + msg + "\n" ); //escreve na propria tela
-             painel.getAreaCentral().getDadosDaRede().addDadoEnviado( painel.getNick()+ " diz: " + msg + "\n" );
-             saida.writeObject("@" + painel.getNick() + " diz: " + msg);//escreve no buffer..
+             String aux = new String();
+             aux = painel.getNick()+ " diz: " + msg; 
+             painel.atualizaChat(aux + "\n"); //escreve na propria tela
+             painel.getAreaCentral().getDadosDaRede().addDadoEnviado("@" + aux + "\n");
+             saida.writeObject("@" + aux );//escreve no buffer..
          }
          else if((origem.equals("Matriz")) || (origem.equals("Jogada") || origem.equals("Patada"))) {
              painel.getAreaCentral().getDadosDaRede().addDadoEnviado(  msg + "\n" );
@@ -382,7 +380,7 @@ public class GerenciadorJogo extends Thread {
                      } while(caracter != ',');
                      int y = Integer.parseInt(aux.substring(0,aux.length()-1));
                      painel.configuraHit(x,y);
-                     System.out.println("\n\n\nNavios Destruidos do: "+painel.getNick()+" È "+painel.getMeuTabuleiro().getNaviosDestruidos()+"\n\n");
+                     //System.out.println("\n\n\nNavios Destruidos do: "+painel.getNick()+" È "+painel.getMeuTabuleiro().getNaviosDestruidos()+"\n\n");
                      if(painel.getMeuTabuleiro().getNaviosDestruidos() == 15) painel.getPainelCentral().habilitaPatada();
                  }
                  //o advers·rio errou e o jogador recebe a vez
