@@ -255,7 +255,7 @@ public class TabuleiroJogador extends JPanel{
         boolean check = true;
         
         if(areaCentral.verticalShip){
-          //  System.out.println("VERTICAL\n");    
+             
             int xInicialMatriz = (int)(x/25); 
             int yInicialMatriz = (int)(y/25); 
             int yFinalMatriz = (int)((y+alturaNavio)/25);
@@ -304,7 +304,7 @@ public class TabuleiroJogador extends JPanel{
         
         public void mousePressed(MouseEvent me){
             
-           // if(eventsAreOff) return; //Solução gambiarra -.-
+           
             //Posiciona uma imagem no tabuleiro
             if(me.getButton() == me.BUTTON1){
                 
@@ -318,20 +318,17 @@ public class TabuleiroJogador extends JPanel{
                     
                     if(areaCentral.verticalShip){
                         
-                        nomeDoNavio = areaCentral.nomeUltimoNavio+"v";
-                        //System.out.println("Nome do navio, dentro do tabuleiro: "+nomeDoNavio);
+                        nomeDoNavio = areaCentral.nomeUltimoNavio+"v";                        
                         larguraNavio = 25;
                         alturaNavio = areaCentral.larguraUltimoNavio;
-                        //System.out.println("Altura do navio, dentro do tabuleiro: "+alturaNavio);
+                        
                     }else{
                         
                         nomeDoNavio = areaCentral.nomeUltimoNavio;
-                        alturaNavio = 25;
-                        //System.out.println("Nome do navio, dentro do tabuleiro,sem ser vertical: "+nomeDoNavio);
+                        alturaNavio = 25;                        
                         larguraNavio = areaCentral.larguraUltimoNavio;
-                    }   //System.out.println("Largura do navio, dentro do tabuleiro,sem ser vertical: "+larguraNavio);
-                    
-                    //System.out.println("Ponto x: "+me.getX()+", ponto y: "+me.getY());
+                    }   
+                                        
                     configuraImagem(me.getX(),me.getY());
                     areaCentral.verticalShip = false;
                 }

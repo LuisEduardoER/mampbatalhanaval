@@ -186,13 +186,15 @@ public class TabuleiroInimigo extends JPanel {
            
            for(int i = p.x/25; i < pxFinal/25; i++){
               for(int j = p.y/25; j < pyFinal/25; j++){
-                
+
+                  System.out.println("\nCoordenada X: " + i + " Coordenada Y: " + j );
+                  
                   switch(getHit(i*25,j*25)){
                     
-                      case HIT_AGUA:  matrizLogicaDoTabuleiro[i/25][j/25] = "Y"; 
+                      case HIT_AGUA:  matrizLogicaDoTabuleiro[i][j] = "Y"; 
                                       imagens.add(new ImagemDoTabuleiro(new ImageIcon("src/imagens/splash.gif").getImage(), new Point(i*25,j*25)));
                                       break;
-                      case HIT_NAVIO: matrizLogicaDoTabuleiro[i/25][j/25] = "X"; 
+                      case HIT_NAVIO: matrizLogicaDoTabuleiro[i][j] = "X"; 
                                       imagens.add(new ImagemDoTabuleiro(new ImageIcon("src/imagens/explodido.gif").getImage(), new Point(i*25,j*25)));
                                       break;
                   }

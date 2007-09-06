@@ -91,7 +91,7 @@ public class GerenciadorJogo extends Thread {
                 if(painel.getPainelCentral().ehJogadaPatada()){
                     boolean acabou = false;
                 
-                    int resultado[][] = painel.getTabuleiroInimigo().getHitArea(me.getX(),me.getY(),100,100);
+                    int resultado[][] = painel.getTabuleiroInimigo().getHitArea(me.getX(),me.getY(),100,100);                    
                     
                     for(int i = 0; i < resultado.length; i++){
                         for(int j = 0; j < resultado[0].length; j++){
@@ -132,7 +132,6 @@ public class GerenciadorJogo extends Thread {
                     painel.setVez(false);
                     if(!acabou) {
                         EnviaDado("X", "Jogada");
-
                     }
                     
                 } else{

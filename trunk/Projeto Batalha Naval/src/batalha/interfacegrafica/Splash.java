@@ -55,8 +55,8 @@ package batalha.interfacegrafica;
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         
         progresso.setStringPainted( true ); //visivel a porcentagem que esta a barra...
-        progresso.setBackground(Color.CYAN); //a cor do fundo da barra Amarela
-        progresso.setForeground(Color.ORANGE); //a cor que ira sobrepondo Vermelha...
+        progresso.setBackground(Color.CYAN); //a cor do fundo da barra cinza
+        progresso.setForeground(Color.ORANGE); //a cor que ira sobrepondo laranja
 
         //ajunta os elementos no painel...
         panel.add("North",img);

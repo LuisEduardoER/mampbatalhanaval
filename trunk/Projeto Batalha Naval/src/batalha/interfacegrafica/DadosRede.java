@@ -81,8 +81,7 @@ public class DadosRede extends JPanel{
         SwingUtilities.invokeLater(
             new Runnable(){
                 
-                public void run(){        
-                    System.out.println("Dados rede" + dado);
+                public void run(){                            
                     areaEntrada.append(dado); //coloca os dados de entrada na JtextArea
                     areaEntrada.setCaretPosition(areaEntrada.getText().length());
                 }

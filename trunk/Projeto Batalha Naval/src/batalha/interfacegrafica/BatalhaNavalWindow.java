@@ -93,8 +93,8 @@ public class BatalhaNavalWindow extends JFrame{
             //para o Splash...espera 9 segundos e pokinhu... para criar a janela principal...
             Thread.sleep( 9000 ); 
         } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }        
+            ex.printStackTrace(); 
+        }       
         
         Som.playAudio(Som.BEM_VINDO); //som de boas vindas...
          
