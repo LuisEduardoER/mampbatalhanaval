@@ -67,7 +67,7 @@ public class Som{
             case DERROTA: derrota.play(); break;
             case BEM_VINDO: bem_vindo.play(); break;
             case PATADA: patada.play(); break;
-            case SOM_CONFIG: pre_game.loop(); break;
+            case SOM_CONFIG: pre_game.play(); break;
             //Nunca deve chegar aqui
             default: JOptionPane.showMessageDialog(null,"Som requisitado não existe");
         }

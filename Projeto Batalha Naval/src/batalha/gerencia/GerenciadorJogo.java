@@ -127,12 +127,12 @@ public class GerenciadorJogo extends Thread {
                         if(acabou) break;
                     }
                     painel.getPainelCentral().desabilitaPatada();
-                    //   painel.getTabuleiroInimigo().limpaCursorPatada();
+
                     //perde a vez de qualquer maneira, pois usou a patada
-                    painel.setVez(false);
                     if(!acabou) {
                         EnviaDado("X", "Jogada");
                     }
+                    painel.setVez(false);
                     
                 } else{
                     String msg = new String();
