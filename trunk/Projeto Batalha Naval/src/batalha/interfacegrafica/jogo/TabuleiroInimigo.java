@@ -203,6 +203,8 @@ public class TabuleiroInimigo extends JPanel {
            
            Som.playAudio(Som.PATADA);
            imagemCursorPatada = null; //gastou a jogada
+           this.vez = false;
+
         }
         else{
                 int checkPosicao = getHit(x,y);

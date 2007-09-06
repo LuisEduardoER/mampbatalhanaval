@@ -370,11 +370,9 @@ public class TabuleiroJogador extends JPanel{
         y = y/25;
         
         if(checkPosicao == HIT_AGUA){
-            
             matrizLogicaDoTabuleiro[x][y] = "Y";
-                
             this.imagens.add(new ImagemDoTabuleiro(new ImageIcon(AreaCentral.INICIO_IMAGENS+"splash.gif").getImage(), p));
-            
+            Som.playAudio(Som.ERRO);
             repaint();
             
             
@@ -386,7 +384,9 @@ public class TabuleiroJogador extends JPanel{
             naviosDestruidos++;
             
             this.imagens.add(new ImagemDoTabuleiro(new ImageIcon(AreaCentral.INICIO_IMAGENS+"explodido.gif").getImage(), p));
-           
+
+            Som.playAudio(Som.ACERTO);
+
             repaint();
         }
     }
