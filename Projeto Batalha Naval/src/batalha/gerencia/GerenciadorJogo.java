@@ -89,6 +89,7 @@ public class GerenciadorJogo extends Thread {
             if(painel.getVez()) {
                 
                 if(painel.getPainelCentral().ehJogadaPatada()){
+                    boolean acabou = false;
                 
                     int resultado[][] = painel.getTabuleiroInimigo().getHitArea(me.getX(),me.getY(),100,100);
                     
@@ -118,13 +119,21 @@ public class GerenciadorJogo extends Thread {
                                     //reinicia o jogo
                                     EnviaDado("*","Jogada");
                                     ReinciaJogo();
+                                    acabou = true;
                                 }
                             }
+                            if(acabou) break;
                         }
+                        if(acabou) break;
                     }
                     painel.getPainelCentral().desabilitaPatada();
-                    EnviaDado("X", "Jogada");
+                    //   painel.getTabuleiroInimigo().limpaCursorPatada();
+                    //perde a vez de qualquer maneira, pois usou a patada
                     painel.setVez(false);
+                    if(!acabou) {
+                        EnviaDado("X", "Jogada");
+
+                    }
                     
                 } else{
                     String msg = new String();
@@ -428,7 +437,8 @@ public class GerenciadorJogo extends Thread {
      painel.somaPontuacao();
      painel.setVez(false);
      painel.getTabuleiroInimigo().setVez(false);
+     painel.getTabuleiroInimigo().limpaCursorPatada();
      painel.setJogadorPronto(false);
-     
+     painel.getPainelCentral().desabilitaPatada();
  }
 }
