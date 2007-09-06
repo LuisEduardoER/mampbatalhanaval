@@ -332,4 +332,9 @@ public class TabuleiroInimigo extends JPanel {
         desligar();
         repaint();
     }
+    
+    public void limpaCursorPatada() {
+        
+        this.imagemCursorPatada = null;
+    }
 }
