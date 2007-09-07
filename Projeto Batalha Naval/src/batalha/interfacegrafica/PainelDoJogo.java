@@ -41,7 +41,7 @@ import java.awt.event.*;
  * @date 04/09/2007
  * @version 0.8
  */
-public class PainelDoJogo extends javax.swing.JPanel {
+public class PainelDoJogo extends JPanel{
     
     /**
      * Segue uma explicação do uso desta classe:
@@ -92,6 +92,7 @@ public class PainelDoJogo extends javax.swing.JPanel {
     private JMenuItem menuSair;
     private JMenuItem novoJogo;
     
+      
     /** 
      * Construtor da classe PainelDoJogo
      */
@@ -187,17 +188,29 @@ public class PainelDoJogo extends javax.swing.JPanel {
     //seta a vez
     public void setVez(final boolean v) {
         
-        this.vez = v;
+        this.vez = v;             
+       //cria um objeto fonte
+      final Font font = new Font("Arial Bold", Font.BOLD, 15);                                    
+           
         SwingUtilities.invokeLater(
             new Runnable(){
                 public void run(){
-                    
-                    lbVez.setText(String.format("%s sua vez", v ? "É": "Não é"));
+                        lbVez.setFont( font );//seta a fonte com a cor vermelha
+                        lbVez.setForeground( Color.RED );
+                        
+                        if( v ){
+                            lbVez.setText( "Tua vez         ");
+                        }else{
+                             lbVez.setForeground( Color.BLUE ); //seta a fonte com a cor azul   
+                             lbVez.setText("Aguarde...         ");
+                        }
+                        
                 }
             }
         );
     }
     
+  
     //retorna o boolean que indica de quem é a vez
     public boolean getVez() {
     
@@ -217,11 +230,15 @@ public class PainelDoJogo extends javax.swing.JPanel {
     public void somaPontuacao() {
         
         this.pontos++;
+        
+        final Font font = new Font("Arial Bold", Font.BOLD, 15); 
+        
         SwingUtilities.invokeLater(
             new Runnable(){
                 public void run(){
-                    
-                    lbPontuacao.setText("Sua pontuação atual é "+pontos);
+                    lbPontuacao.setFont( font );
+                    lbPontuacao.setForeground( Color.BLUE );
+                    lbPontuacao.setText("Sua pontuação atual é " + pontos );
                 }
             }
         );
@@ -264,6 +281,9 @@ public class PainelDoJogo extends javax.swing.JPanel {
         //sejam adicionados em 5 partes: norte, sul, leste, oeste e centro. Para quem quiser saber mais sobre o BorderLayout,
         //http://java.sun.com/docs/books/tutorial/uiswing/layout/border.html
         this.setLayout(new BorderLayout());        
+         
+        Font font = new Font("Arial Bold", Font.BOLD, 15); 
+        
         
         //Instancia os objetos
         tabuleiroInimigo = new TabuleiroInimigo();
@@ -278,11 +298,15 @@ public class PainelDoJogo extends javax.swing.JPanel {
         
         //inicia o label da vez
         this.lbVez = new JLabel("Este label indica de quem é a vez");
-        this.lbVez.setPreferredSize(new Dimension(160,50));
+        lbVez.setFont( font );
+        lbVez.setForeground( Color.GREEN);
+        this.lbVez.setPreferredSize(new Dimension(0,0));
         
         //inicia o label da pontuação
-        this.lbPontuacao = new JLabel("Este label indica sua pontuação");
-        this.lbPontuacao.setPreferredSize(new Dimension(160,50));
+        this.lbPontuacao = new JLabel("          Este label indica sua pontuação");
+        lbPontuacao.setFont( font );
+        lbPontuacao.setForeground( Color.GREEN);
+        this.lbPontuacao.setPreferredSize(new Dimension(0,0));
         //inicialmente não existe conexão estabelecida
         this.conectado = false;
 
@@ -567,4 +591,7 @@ public class PainelDoJogo extends javax.swing.JPanel {
         this.meuTabuleiro.resetaNaviosDestruidos();
         this.painelCentral.resetaPatada();
     }  
+
+    public void setForeground(Color fg) {
+    }
 }
