@@ -27,14 +27,16 @@ public class Som{
                             DERROTA = 3, //derrota e
                             BEM_VINDO = 4,//bem-vindo
                             PATADA = 5, //patada
-                            SOM_CONFIG = 6;
+                            SOM_CONFIG = 6,
+                            CHAT = 7; //quando receber uma msg no chat
     private static AudioClip acerto,   //Som de acerto do navio
                                erro,   //Som de erro do navio
                             vitoria,   //Som de vitoria para um jogador
                             derrota,   //Som de derrota para um jogador
                             bem_vindo, //Som de bem vindo ao jogo 
                             pre_game,  //Som de configuração do tabuleiro
-                               patada; //Som da patada
+                               patada, //Som da patada
+                             chat; //Som do chat 
                                 
     //Trecho estático que inicializa os audioclipes
     static{
@@ -47,6 +49,7 @@ public class Som{
             bem_vindo = Applet.newAudioClip(new URL("file:src/som/bem_vindo.au"));
             patada = Applet.newAudioClip(new URL("file:src/som/patada.au"));
             pre_game = Applet.newAudioClip(new URL("file:src/som/pre_game.au"));
+            chat = Applet.newAudioClip(new URL("file:src/som/msgrecebida.au"));
         }catch(MalformedURLException excp){
             
             excp.printStackTrace();
@@ -68,6 +71,7 @@ public class Som{
             case BEM_VINDO: bem_vindo.play(); break;
             case PATADA: patada.play(); break;
             case SOM_CONFIG: pre_game.play(); break;
+            case CHAT: chat.play(); break;
             //Nunca deve chegar aqui
             default: JOptionPane.showMessageDialog(null,"Som requisitado não existe");
         }

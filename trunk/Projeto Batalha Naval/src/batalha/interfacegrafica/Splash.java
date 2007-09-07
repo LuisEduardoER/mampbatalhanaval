@@ -38,6 +38,9 @@ package batalha.interfacegrafica;
     
     public void criaSplash(String imgCaminho, String message){
         frame = new JFrame("MAMP&R Batalha Naval");
+        
+        ImageIcon image = new ImageIcon("src/imagens/gato.gif"); //poe um novo simbolo no lugar do simbolo do java
+        frame.setIconImage(image.getImage()); //no frame 
           
         JPanel panel = new JPanel();
         panel.setBackground( new Color(255,255,255) );//colore o fundo do painel...

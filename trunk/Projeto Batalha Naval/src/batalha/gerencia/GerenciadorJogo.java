@@ -339,6 +339,8 @@ public class GerenciadorJogo extends Thread {
                  String pacote = msg.substring(0,1);
                  if(pacote.equals("@")) {
                     painel.atualizaChat(msg.substring(1) + "\n");
+                    
+                    Som.playAudio(Som.CHAT);
                  } 
                  else if(pacote.equals("*")) {
                     ReinciaJogo();
@@ -387,8 +389,7 @@ public class GerenciadorJogo extends Thread {
                          aux += caracter;
                      } while(caracter != ',');
                      int y = Integer.parseInt(aux.substring(0,aux.length()-1));
-                     painel.configuraHit(x,y);
-                     //System.out.println("\n\n\nNavios Destruidos do: "+painel.getNick()+" é "+painel.getMeuTabuleiro().getNaviosDestruidos()+"\n\n");
+                     painel.configuraHit(x,y);                     
                      if(painel.getMeuTabuleiro().getNaviosDestruidos() == 15) painel.getPainelCentral().habilitaPatada();
                  }
                  //o adversário errou e o jogador recebe a vez

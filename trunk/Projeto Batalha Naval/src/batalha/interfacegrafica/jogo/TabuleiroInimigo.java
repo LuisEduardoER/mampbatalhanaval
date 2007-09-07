@@ -152,8 +152,12 @@ public class TabuleiroInimigo extends JPanel {
         
         if(imagemCursorPatada != null)
             g.drawImage(imagemCursorPatada,p.x,p.y,this);
-        else
+        else if(this.vez)
             g.drawImage(imagemCursor,p.x,p.y,this);
+        else {
+            g.drawImage(null,p.x,p.y,this);
+            
+        }
     }
     
     /**
