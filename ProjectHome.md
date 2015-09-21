@@ -1,0 +1,2 @@
+Este jogo é um projeto para a disciplina de Redes de Computadores, sobre orientação do Prof. Mário Lemes, do curso de Bacharelado em Ciência da Computação da UEL.
+O principal objetivo deste projeto é exibir, através do jogo, o funcionamento de sockets para Redes, utilizando a linguagem de programação Java.
